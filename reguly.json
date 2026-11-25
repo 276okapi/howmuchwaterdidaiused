@@ -1,0 +1,26 @@
+{
+  "_opis": "Reguły SYGNAŁÓW W TREŚCI (słabych, k = 1). Główny wskaźnik ich nie liczy: liczy tylko twarde zdarzenia (Esc, zatrzymanie przy narzędziu, błąd API, brak odpowiedzi). Sprawdzany jest NASTĘPNY prompt w sesji (pierwsze 400 znaków własnego tekstu, bez wklejek), wysłany najpóźniej 'oknoMinut' po końcu odpowiedzi. Pierwsza pasująca reguła wygrywa. 'wklejka' = dodatkowy wzorzec sprawdzany w treści <pasted_content>. 'pomijajPoPotwierdzeniu' = reguła nie działa, gdy prompt zaczyna się potwierdzeniem (np. 'tak, ale zamiast...'). Wzorce: składnia .NET regex, bez rozróżniania wielkości liter; podawaj warianty z polskimi znakami i bez nich.",
+  "oknoMinut": 30,
+  "potwierdzenie": "^\\s*(tak|ok|okej|okay|świetnie|swietnie|super|dzięki|dzieki|dziękuję|dziekuje|dobra|akceptuj[eę]|yes|great|continue)\\b",
+  "reguly": [
+    {
+      "nazwa": "odrzucenie",
+      "wzorzec": "^\\s*(nie[,.!]?\\s+(tak|to|o to|działa|dziala|rób|rob|ruszaj|zmieniaj)\\b|to nie (to|tak|działa|dziala)\\b|źle\\b|zle\\b|błędnie|blednie|wrong\\b|nope\\b|cofnij|cofam|wycofaj|revert\\b|undo\\b)"
+    },
+    {
+      "nazwa": "uporczywy problem",
+      "wzorzec": "(\\b(nadal|wciąż|wciaz|dalej nie|ciągle|ciagle|w dalszym ci[aą]gu|znowu|znów|znow|still|again)\\b.{0,60}?\\b(nie(?!\\s+wiem)|błąd|błęd|blad|bled|error|fail|crash|wywala|not|doesn'?t|didn'?t|isn'?t)\\b|\\b(nie działa|nie dziala|nie zadziałało|nie zadzialalo|doesn'?t work|not working|didn'?t work)\\b)",
+      "pomijajPoPotwierdzeniu": true
+    },
+    {
+      "nazwa": "doprecyzowanie",
+      "wzorzec": "\\b(chodzi mi|chodziło mi|chodzilo mi|miało być|mialo byc|miałem na myśli|mialem na mysli|nie o to|nie to miałem|nie to mialem|i meant|not what i)",
+      "pomijajPoPotwierdzeniu": true
+    },
+    {
+      "nazwa": "zgłoszony błąd",
+      "wzorzec": "^\\s*(dlaczego|czemu|why)\\b.{0,80}(błąd|błęd|blad|bled|erro|exception|fail|refused|\\bnie\\b)",
+      "wklejka": "(error|exception|fail|traceback|stack trace|błąd|blad|refused)"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "_opis": "Przelicznik zużycia wody (chłodzenie centrum danych + woda zużyta przy produkcji energii), w litrach na milion tokenów. Liczone dla każdej odpowiedzi, z subagentami włącznie. To orientacyjny szacunek: publiczne dane różnią się o rząd wielkości (np. Mistral LCA 2025: ok. 45 ml na odpowiedź 400 tokenów, tj. ok. 110 l na mln tokenów wyjścia). Odczyt z cache jest wielokrotnie tańszy obliczeniowo niż generowanie, stąd niższe stawki dla wejścia. Zmiana działa od następnego uruchomienia, cache nie trzeba czyścić.",
+  "litryNaMilionTokenow": {
+    "in": 20,
+    "cw": 20,
+    "cr": 2,
+    "out": 100
+  },
+  "basenOlimpijskiLitry": 2500000
+}

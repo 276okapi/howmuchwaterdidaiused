@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statystyki promptów</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10); --hover: rgba(22,140,80,.09);
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948; --other: #a8a7a0;
+  --water: #1f8fd8; --water2: #63c2f2; --glass: rgba(31,143,216,.06);
+  /* accent = bars, calendar, selection; green in the light theme */
+  --accent: #17924f; --accent-ink: #0f6e3a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10); --hover: rgba(57,135,229,.14);
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+    --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --other: #6b6a65;
+    --water: #2b8fd0; --water2: #5fb6e6; --glass: rgba(95,182,230,.06);
+    --accent: #3987e5; --accent-ink: #7fb2f0;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10); --hover: rgba(57,135,229,.14);
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+  --s5: #d55181; --s6: #0ca30c; --s7: #9085e9; --s8: #e66767; --other: #6b6a65;
+  --water: #2b8fd0; --water2: #5fb6e6; --glass: rgba(95,182,230,.06);
+  --accent: #3987e5; --accent-ink: #7fb2f0;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1240px; margin: 0 auto; padding: 20px 16px 48px; }
+h1 { font-size: 22px; margin: 0; font-weight: 650; }
+h2 { font-size: 15px; margin: 0; font-weight: 600; }
+.sub { color: var(--ink2); margin: 0 0 16px; }
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-bottom: 14px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; min-width: 0; }
+.head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin-bottom: 12px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button, .nav button { background: transparent; color: var(--ink2); border: 0; padding: 5px 10px; font: inherit; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button[aria-pressed="true"] { background: var(--hover); color: var(--ink); font-weight: 600; }
+.tabs button { padding: 6px 16px; }
+.nav { display: flex; align-items: center; gap: 6px; }
+.nav button { border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; }
+.nav button:disabled { opacity: .35; cursor: default; }
+.nav input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 3px 8px; }
+.day-title { font-size: 17px; font-weight: 600; margin: 0; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 720px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+.kpi { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; min-width: 0; }
+.kpi .v { font-size: 22px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.kpi .l { color: var(--ink2); font-size: 12px; }
+.kpi .s { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.kpi.link { cursor: pointer; }
+.kpi.link:hover { background: var(--hover); }
+td.c, th.c { text-align: center; white-space: nowrap; }
+.corr { color: var(--ink2); cursor: help; }
+svg { display: block; width: 100%; overflow: visible; }
+svg text { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+svg .lane { fill: var(--ink2); font-size: 12px; }
+svg .val { fill: var(--ink); font-weight: 600; }
+.hit { fill: transparent; cursor: pointer; }
+.hit:hover { fill: var(--hover); }
+.bar-t { cursor: pointer; }
+.cell { cursor: pointer; }
+.cell:hover { stroke: var(--ink2); stroke-width: 1; }
+.empty { color: var(--muted); margin: 24px 0; text-align: center; }
+#tip { position: fixed; pointer-events: none; z-index: 10; max-width: 340px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; box-shadow: 0 4px 16px rgba(0,0,0,.15);
+  font-size: 12px; display: none; }
+#tip b { font-weight: 600; }
+#tip .m { color: var(--ink2); }
+#tip .x { margin-top: 6px; color: var(--ink2); font-style: italic; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { color: var(--ink2); font-weight: 600; cursor: pointer; white-space: nowrap; user-select: none; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.t { white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.x { color: var(--ink2); min-width: 260px; }
+td.pj { white-space: nowrap; }
+tr.sel td { background: var(--hover); }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: baseline; }
+.tag { font-size: 11px; color: var(--ink2); border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; margin-left: 4px; }
+.note { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
+footer { color: var(--muted); font-size: 12px; }
+[hidden] { display: none !important; }
+
+/* ---------- dashboard ---------- */
+.dash-row { display: grid; grid-template-columns: minmax(260px, 1fr) 2fr; gap: 16px; }
+@media (max-width: 860px) { .dash-row { grid-template-columns: minmax(0, 1fr); } }
+.water-card { display: flex; flex-direction: column; }
+.water-big { display: flex; align-items: center; gap: 18px; margin: 6px 0 4px; cursor: help; }
+.water-big .v { font-size: 34px; font-weight: 700; color: var(--water); white-space: nowrap; line-height: 1.1;
+  text-decoration: underline dotted var(--axis); text-underline-offset: 6px; }
+.water-big .l { color: var(--ink2); font-size: 12px; margin-top: 4px; }
+.pool { flex: 0 0 auto; width: 96px; height: 54px; }
+.water-facts { list-style: none; padding: 0; margin: 10px 0 0; color: var(--ink2); font-size: 13px; }
+.water-facts li { padding: 4px 0; border-top: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+.water-facts b { color: var(--ink); font-weight: 600; }
+.legend { display: flex; align-items: center; gap: 4px; color: var(--muted); font-size: 11px; }
+.legend i { display: inline-block; width: 11px; height: 11px; border-radius: 2px; }
+
+/* ---------- day view ---------- */
+.day-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 16px; align-items: start; }
+.daylist { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; padding: 8px; }
+.daylist h3 { font-size: 12px; text-transform: capitalize; color: var(--muted); font-weight: 600; margin: 10px 6px 4px; }
+.daylist h3:first-child { margin-top: 2px; }
+.daylist button { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; width: 100%; text-align: left; background: transparent;
+  border: 0; border-radius: 6px; padding: 5px 8px; font: inherit; color: var(--ink); cursor: pointer; }
+.daylist button:hover { background: var(--hover); }
+.daylist button[aria-current="true"] { background: var(--hover); box-shadow: inset 3px 0 0 var(--accent); font-weight: 600; }
+.daylist .dn { font-size: 13px; font-variant-numeric: tabular-nums; }
+.daylist .dc { font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; text-align: right; }
+.daylist .db { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: var(--grid); margin-top: 4px; overflow: hidden; }
+.daylist .db i { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+@media (max-width: 860px) {
+  .day-layout { grid-template-columns: minmax(0, 1fr); }
+  .daylist { position: static; max-height: 220px; }
+}
+.day-grid { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 12px; margin-bottom: 8px; }
+@media (max-width: 720px) { .day-grid { grid-template-columns: minmax(0, 1fr); } }
+.water-panel { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; display: flex; gap: 10px; align-items: stretch; min-height: 150px; }
+.scale { position: relative; width: 34px; font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.scale span { position: absolute; right: 0; transform: translateY(50%); white-space: nowrap; }
+.tube { position: relative; width: 38px; border: 2px solid var(--axis); border-top: 0; border-radius: 0 0 12px 12px;
+  background: var(--glass); overflow: hidden; }
+.tube .mark { position: absolute; left: 0; width: 8px; border-top: 1px solid var(--axis); }
+.tube .fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0;
+  background: linear-gradient(to top, var(--water), var(--water2)); transition: height .7s cubic-bezier(.2,.8,.2,1); }
+.tube .fill::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: rgba(255,255,255,.45); }
+@media (prefers-reduced-motion: reduce) { .tube .fill { transition: none; } }
+.water-text { display: flex; flex-direction: column; justify-content: flex-end; min-width: 0; }
+.water-text .v { font-size: 24px; font-weight: 700; color: var(--water); white-space: nowrap; }
+.water-text .l { color: var(--ink2); font-size: 12px; }
+.water-text .s { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.topctl { display: flex; flex-wrap: wrap; gap: 8px; }
+.theme button { padding: 6px 10px; }
+
+/* ---------- prompts view ---------- */
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.filters select, .filters label { font: inherit; color: var(--ink2); }
+.filters select { color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; }
+.pgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 860px) { .pgrid { grid-template-columns: minmax(0, 1fr); } }
+.blist { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; }
+.blist button { display: block; position: relative; text-align: left; font: inherit; color: var(--ink); background: transparent;
+  border: 0; border-radius: 4px; padding: 3px 6px; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.blist button i { position: absolute; left: 0; top: 2px; bottom: 2px; background: var(--accent); opacity: .18; border-radius: 4px; }
+.blist button span { position: relative; }
+.blist button:hover i, .blist button[aria-pressed="true"] i { opacity: .38; }
+.blist button[aria-pressed="true"] { font-weight: 600; }
+.blist .n { font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; text-align: right; padding: 3px 0; }
+.match { margin: 0; padding: 0; list-style: none; max-height: 420px; overflow-y: auto; }
+.match li { padding: 6px 8px; border-bottom: 1px solid var(--grid); cursor: pointer; border-radius: 4px; }
+.match li:hover { background: var(--hover); }
+.match .meta { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.match mark { background: var(--hover); color: var(--accent-ink); font-weight: 600; padding: 0 1px; border-radius: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <h1>Statystyki promptów Claude Code</h1>
+    <div class="topctl">
+      <div class="seg tabs" id="tabs" role="tablist">
+        <button data-v="dash" role="tab">Pulpit</button><button data-v="day" role="tab">Dni</button><button data-v="prompts" role="tab">Prompty</button>
+      </div>
+      <div class="seg theme" id="theme" title="Motyw">
+        <button data-t="auto" title="Jak w systemie">Auto</button><button data-t="light">Jasny</button><button data-t="dark">Ciemny</button>
+      </div>
+    </div>
+  </div>
+  <p class="sub" id="summary"></p>
+
+  <!-- ================= DASHBOARD ================= -->
+  <div id="viewDash">
+    <section class="card">
+      <div class="kpis" id="dashKpis"></div>
+    </section>
+
+    <div class="dash-row">
+      <section class="card water-card">
+        <h2>Woda zużyta przez Twoje prompty</h2>
+        <div class="water-big" id="waterBig">
+          <svg class="pool" viewBox="0 0 96 54" aria-hidden="true">
+            <rect x="1" y="6" width="94" height="46" rx="4" fill="var(--glass)" stroke="var(--axis)" stroke-width="2"/>
+            <rect id="poolFill" x="3" y="50" width="90" height="0" rx="2" fill="var(--water)"/>
+            <g stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 3"><line x1="3" x2="93" y1="17" y2="17"/><line x1="3" x2="93" y1="29" y2="29"/><line x1="3" x2="93" y1="41" y2="41"/></g>
+          </svg>
+          <div><div class="v" id="waterTotal"></div><div class="l">łącznie, szacunek · najedź, by porównać z basenem</div></div>
+        </div>
+        <ul class="water-facts" id="waterFacts"></ul>
+        <p class="note" id="waterNote"></p>
+      </section>
+
+      <section class="card">
+        <div class="head">
+          <h2>Kalendarz aktywności</h2>
+          <div class="legend" id="heatLegend"></div>
+        </div>
+        <div id="heat"></div>
+        <p class="note">Kliknij dzień, aby otworzyć jego szczegóły.</p>
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="head">
+        <h2>Prompty dziennie</h2>
+        <div class="seg" id="range">
+          <button data-r="14">14 dni</button><button data-r="30">30 dni</button><button data-r="90">90 dni</button><button data-r="all">Wszystko</button>
+        </div>
+      </div>
+      <div id="bars"></div>
+      <p class="note">Kliknij słupek, aby zobaczyć szczegóły dnia.</p>
+    </section>
+
+    <section class="card">
+      <div class="head"><h2>Projekty</h2></div>
+      <div class="table-wrap"><table id="projTbl"></table></div>
+    </section>
+  </div>
+
+  <!-- ================= DAY VIEW ================= -->
+  <div id="viewDay" hidden>
+    <div class="day-layout">
+      <nav class="card daylist" id="dayList" aria-label="Dni z promptami"></nav>
+      <div>
+        <section class="card">
+          <div class="head">
+            <p class="day-title" id="dayTitle"></p>
+            <div class="nav">
+              <button id="prev" title="Poprzedni dzień z promptami (←)">‹</button>
+              <input type="date" id="dayPick">
+              <button id="next" title="Następny dzień z promptami (→)">›</button>
+            </div>
+          </div>
+          <div class="day-grid">
+            <div class="kpis" id="kpis"></div>
+            <div class="water-panel" id="waterPanel" role="img">
+              <div class="scale" id="tubeScale"></div>
+              <div class="tube" id="tube"><div class="fill" id="tubeFill"></div></div>
+              <div class="water-text">
+                <div class="v" id="dayWater"></div>
+                <div class="l">woda (szacunek)</div>
+                <div class="s" id="dayWaterSub"></div>
+              </div>
+            </div>
+          </div>
+          <p class="note" id="kpiNote" style="margin:0 0 16px"></p>
+          <h2>Oś czasu: od wysłania promptu do ostatniej odpowiedzi</h2>
+          <div id="timeline" style="margin-top:10px"></div>
+          <p class="note" id="tlNote"></p>
+        </section>
+
+        <section class="card">
+          <div class="head"><h2>Prompty dnia</h2></div>
+          <div class="table-wrap"><table id="tbl"></table></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PROMPTS ================= -->
+  <div id="viewPrompts" hidden>
+    <section class="card">
+      <div class="head" style="margin-bottom:0">
+        <div class="filters">
+          <div class="seg" id="pRange">
+            <button data-r="7">7 dni</button><button data-r="30">30 dni</button><button data-r="90">90 dni</button><button data-r="all">Wszystko</button>
+          </div>
+          <select id="pProj" aria-label="Projekt"></select>
+          <label><input type="checkbox" id="pStop" checked> pomijaj słowa funkcyjne</label>
+        </div>
+        <span class="note" style="margin:0" id="pCount"></span>
+      </div>
+    </section>
+    <section class="card"><div class="kpis" id="pKpis"></div></section>
+
+    <div class="pgrid">
+      <section class="card">
+        <div class="head"><h2>Najczęstsze słowa</h2></div>
+        <div class="blist" id="pWords"></div>
+      </section>
+      <section class="card">
+        <div class="head">
+          <h2>Najczęstsze sformułowania</h2>
+          <div class="seg" id="pN"><button data-n="2">2 słowa</button><button data-n="3">3 słowa</button><button data-n="4">4 słowa</button></div>
+        </div>
+        <div class="blist" id="pPhrases"></div>
+      </section>
+      <section class="card">
+        <div class="head"><h2>Jak zaczynasz prompty</h2></div>
+        <div class="blist" id="pOpen"></div>
+      </section>
+      <section class="card">
+        <div class="head"><h2>Komendy</h2></div>
+        <div class="blist" id="pCmd"></div>
+      </section>
+      <section class="card">
+        <div class="head"><h2>Długość promptów (słowa)</h2></div>
+        <div id="pLen"></div>
+      </section>
+      <section class="card">
+        <div class="head"><h2>O której piszesz</h2></div>
+        <div id="pHour"></div>
+      </section>
+    </div>
+
+    <section class="card" id="pMatchCard">
+      <div class="head"><h2 id="pMatchTitle">Prompty z wybranym sformułowaniem</h2></div>
+      <ul class="match" id="pMatch"></ul>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function () {
+  const RAW = /*__DATA__*/[];
+  const META = /*__META__*/{};
+
+  const $ = s => document.querySelector(s);
+  const pad = n => String(n).padStart(2, '0');
+  const dayKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseDay = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+  const fmtTime = d => d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const fmtNum = n => Math.round(n).toLocaleString('pl-PL');
+  const fmtDur = s => {
+    s = Math.round(s);
+    if (s < 60) return s + ' s';
+    const m = Math.floor(s / 60);
+    if (m < 60) return m + ' min ' + pad(s % 60) + ' s';
+    return Math.floor(m / 60) + ' h ' + pad(m % 60) + ' min';
+  };
+  const fmtDayLong = k => parseDay(k).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const fmtDayShort = k => { const d = parseDay(k); return d.getDate() + '.' + pad(d.getMonth() + 1); };
+  const fmtDayMed = k => parseDay(k).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmtUsd = n => (n > 0 && n < 0.005) ? '< 0,01 USD'
+    : n.toLocaleString('pl-PL', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtPct = (a, b) => b ? (a / b).toLocaleString('pl-PL', { style: 'percent', maximumFractionDigits: 0 }) : '–';
+  // Polish plural: 1 butelka, 2 butelki, 5 butelek
+  const plural = (n, one, few, many) => {
+    n = Math.abs(Math.round(n));
+    if (n === 1) return one;
+    const d = n % 10, h = n % 100;
+    return d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many;
+  };
+  // correction rate: corrected prompts / prompts that could be corrected (interrupted, or followed by another prompt)
+  // k = 2: hard event (Esc, stopped at a tool, API error, no reply) - the main rate, over all prompts;
+  // k = 1: soft signal in the next prompt (reguly.json) - shown separately, over prompts followed by another one
+  const corrStats = ts => ({ n: ts.filter(t => t.k === 2).length, d: ts.length, soft: ts.filter(t => t.nx && t.k === 1).length, softD: ts.filter(t => t.nx).length });
+  const corrSub = cs => `${cs.n} z ${cs.d} · sygnały w treści: ${cs.soft}`;
+  const corrBreakdown = ts => {
+    const c = {}; ts.filter(t => t.k === 2).forEach(t => c[t.kr] = (c[t.kr] || 0) + 1);
+    return Object.entries(c).map(([k, n]) => `${k}: ${n}`).join('\n') || 'brak';
+  };
+  const CORR_MARK = ['', '○', '●'];
+  const corrLabel = t => t.k === 2 ? `przerwane lub awaria: ${t.kr || ''}` : t.k === 1 ? `sygnał w następnym prompcie: ${t.kr || ''}` : '';
+  const median = a => { if (!a.length) return 0; const b = [...a].sort((x, y) => x - y), h = b.length >> 1; return b.length % 2 ? b[h] : (b[h - 1] + b[h]) / 2; };
+  const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
+
+  // ---------- water ----------
+  const WF = Object.assign({ in: 20, cw: 20, cr: 2, out: 100, pool: 2500000 }, META.water || {});
+  // reports built before the water estimate existed have no h2o: estimate from the main-thread tokens
+  const waterOf = r => typeof r.h2o === 'number' ? r.h2o : ((r.in || 0) * WF.in + (r.cw || 0) * WF.cw + (r.cr || 0) * WF.cr + (r.o || 0) * WF.out) / 1e6;
+  const fmtL = l => l > 0 && l < 0.01 ? '< 0,01 l'
+    : l >= 100 ? fmtNum(l) + ' l'
+    : l.toLocaleString('pl-PL', { maximumFractionDigits: l >= 10 ? 1 : 2 }) + ' l';
+  const fmtSig = n => n.toLocaleString('pl-PL', { maximumSignificantDigits: 3 });
+  const poolsText = l => {
+    const p = l / WF.pool;
+    return `${fmtSig(p)} basenu olimpijskiego (${(p * 100).toLocaleString('pl-PL', { maximumSignificantDigits: 3 })}%)`;
+  };
+  const bottles = l => { const n = Math.round(l / 0.5); return `${fmtNum(n)} ${plural(n, 'butelka', 'butelki', 'butelek')} 0,5 l`; };
+
+  const GAP = META.idleGap || 15;
+  const turns = RAW.map(r => {
+    const start = new Date(r.s), end = new Date(r.e);
+    // activity segments in absolute ms; idle gaps longer than GAP minutes are not counted
+    const segs = (r.g || [[0, r.a]]).map(([a, b]) => [+start + a * 1000, +start + b * 1000]);
+    return Object.assign({}, r, { start, end, segs, dur: r.a, wall: Math.max(0, (end - start) / 1000), day: dayKey(start), h2o: waterOf(r) });
+  }).sort((a, b) => a.start - b.start);
+  // "claude-opus-5-5" -> "Opus 5.5", "claude-sonnet-4-5-20250929" -> "Sonnet 4.5"; unknown ids stay as-is
+  const fmtModel = id => {
+    const mm = /^claude-([a-z]+)-(\d+)(?:-(\d{1,2}))?(?:-\d{8})?$/.exec(id);
+    return mm ? mm[1][0].toUpperCase() + mm[1].slice(1) + ' ' + mm[2] + (mm[3] ? '.' + mm[3] : '') : id;
+  };
+  const fmtModels = s => s ? s.split(', ').map(fmtModel).join(', ') : '–';
+  const fmtEnd = t => t.day === dayKey(t.end)
+    ? fmtTime(t.end)
+    : t.end.toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric' }) + ' ' + fmtTime(t.end);
+  turns.forEach((t, i) => t.id = i);
+
+  if (!turns.length) {
+    document.querySelector('main').innerHTML = '<h1>Statystyki promptów</h1><p class="empty">Nie znaleziono promptów w transkryptach.</p>';
+    return;
+  }
+
+  // Color follows the project, ranked once over the whole history (never re-ranked per view).
+  const projCount = {};
+  turns.forEach(t => projCount[t.p] = (projCount[t.p] || 0) + 1);
+  const projOrder = Object.keys(projCount).sort((a, b) => projCount[b] - projCount[a] || a.localeCompare(b));
+  const projColor = p => { const i = projOrder.indexOf(p); return i < 8 ? `var(--s${i + 1})` : 'var(--other)'; };
+
+  const byDay = new Map();
+  turns.forEach(t => { if (!byDay.has(t.day)) byDay.set(t.day, []); byDay.get(t.day).push(t); });
+  const days = [...byDay.keys()].sort();
+  const dayStat = new Map(days.map(k => {
+    const ts = byDay.get(k);
+    return [k, { n: ts.length, sum: sum(ts, t => t.dur), usd: sum(ts, t => t.usd), h2o: sum(ts, t => t.h2o), corr: corrStats(ts) }];
+  }));
+  const maxDayN = Math.max(...days.map(k => dayStat.get(k).n));
+  const maxDayH2O = Math.max(...days.map(k => dayStat.get(k).h2o));
+  const recordWaterDay = days.find(k => dayStat.get(k).h2o === maxDayH2O);
+
+  let view = 'dash';
+  let selDay = days[days.length - 1];
+  let range = 30;
+  let selTurn = null;
+  let sortKey = 'start', sortDir = 1;
+
+  // ---------- tooltip ----------
+  const tip = $('#tip');
+  function showTip(html, ev) {
+    tip.innerHTML = html; tip.style.display = 'block';
+    const r = tip.getBoundingClientRect();
+    let x = ev.clientX + 14, y = ev.clientY + 14;
+    if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+    tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+  }
+  const hideTip = () => tip.style.display = 'none';
+  const dayTip = k => {
+    const b = dayStat.get(k);
+    return `<b>${esc(fmtDayLong(k))}</b><br>Prompty: <b>${b ? b.n : 0}</b>` + (b ? `<br><span class="m">Aktywny czas agenta: ${fmtDur(b.sum)}`
+      + `<br>Szacowany koszt: ${fmtUsd(b.usd)}`
+      + `<br>Woda: ${fmtL(b.h2o)}`
+      + `<br>Przerwane / awarie: ${b.corr.n} z ${b.corr.d}${b.corr.soft ? `, sygnały w treści: ${b.corr.soft}` : ''}</span>` : '');
+  };
+
+  function niceStep(raw) {
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const f = raw / p;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+  }
+  function barPath(x, y, w, h, r) {
+    if (h <= 0) return '';
+    r = Math.min(r, w / 2, h);
+    return `M${x},${y + h}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h}Z`;
+  }
+
+  // ---------- routing: #pulpit, #dzien/YYYY-MM-DD ----------
+  function openDay(k, replace) {
+    const h = '#dzien/' + k;
+    if (replace) { history.replaceState(null, '', h); route(); }
+    else location.hash = h;
+  }
+  function route() {
+    const m = /^#dzien(?:\/(\d{4}-\d{2}-\d{2}))?$/.exec(location.hash);
+    if (m) { view = 'day'; if (m[1] && m[1] !== selDay) { selDay = m[1]; selTurn = null; } }
+    else view = location.hash === '#prompty' ? 'prompts' : 'dash';
+    $('#viewDash').hidden = view !== 'dash';
+    $('#viewDay').hidden = view !== 'day';
+    $('#viewPrompts').hidden = view !== 'prompts';
+    document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === view)));
+    hideTip();
+    if (view === 'dash') renderDash(); else if (view === 'day') renderDay(); else renderPrompts();
+  }
+  addEventListener('hashchange', route);
+  $('#tabs').addEventListener('click', e => {
+    const v = e.target.dataset.v; if (!v) return;
+    location.hash = v === 'day' ? '#dzien/' + selDay : v === 'prompts' ? '#prompty' : '#pulpit';
+  });
+
+  // ---------- theme: auto (system) / light (green accents) / dark; remembered in this browser ----------
+  const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* storage blocked */ } } };
+  function setTheme(t) {
+    if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+    else delete document.documentElement.dataset.theme;
+    document.querySelectorAll('#theme button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.t === (t || 'auto'))));
+  }
+  setTheme(store.get('promptStatsTheme'));
+  $('#theme').addEventListener('click', e => {
+    const t = e.target.dataset.t; if (!t) return;
+    store.set('promptStatsTheme', t); setTheme(t);
+  });
+
+  // ---------- dashboard: KPIs ----------
+  const allDurs = turns.map(t => t.dur);
+  const totUsd = sum(turns, t => t.usd);
+  const totH2O = sum(turns, t => t.h2o);
+  const allCorr = corrStats(turns);
+  const firstDay = days[0], lastDay = days[days.length - 1];
+  const spanDays = Math.round((parseDay(lastDay) - parseDay(firstDay)) / 864e5) + 1;
+  const busiest = days.reduce((a, k) => dayStat.get(k).n > dayStat.get(a).n ? k : a, days[0]);
+
+  function renderDashKpis() {
+    const totDur = sum(allDurs, x => x);
+    const k = [
+      ['Prompty', fmtNum(turns.length), `śr. ${(turns.length / days.length).toLocaleString('pl-PL', { maximumFractionDigits: 1 })} na dzień aktywny`],
+      ['Dni aktywne', fmtNum(days.length), `z ${fmtNum(spanDays)} dni kalendarzowych`],
+      ['Aktywny czas agenta (suma)', fmtDur(totDur), `śr. ${fmtDur(totDur / days.length)} na dzień`],
+      ['Szacowany koszt (ceny API)', fmtUsd(totUsd) + (turns.some(t => t.cu) ? '*' : ''), `śr. ${fmtUsd(totUsd / days.length)} na dzień`],
+      ['Przerwane / awarie', fmtPct(allCorr.n, allCorr.d), corrSub(allCorr), null, corrBreakdown(turns)],
+      ['Mediana czasu odpowiedzi', fmtDur(median(allDurs)), `najdłuższa: ${fmtDur(Math.max(0, ...allDurs))}`],
+      ['Tokeny wyjściowe', fmtNum(sum(turns, t => t.o)), `śr. ${fmtNum(sum(turns, t => t.o) / turns.length)} na prompt`],
+      ['Najaktywniejszy dzień', fmtNum(dayStat.get(busiest).n) + ' prom.', fmtDayMed(busiest) + ' →', busiest],
+    ];
+    $('#dashKpis').innerHTML = k.map(kpiHtml).join('');
+  }
+  // [label, value, sub, day to open on click, hover title]
+  function kpiHtml([l, v, s, link, title]) {
+    const t = link ? 'Otwórz ten dzień' : title;
+    return `<div class="kpi${link ? ' link' : ''}"${link ? ` data-day="${link}"` : ''}${t ? ` title="${esc(t)}"` : ''}>`
+      + `<div class="v">${v}</div><div class="l">${l}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`;
+  }
+  $('#dashKpis').addEventListener('click', e => { const el = e.target.closest('[data-day]'); if (el) openDay(el.dataset.day); });
+
+  // ---------- dashboard: water ----------
+  function renderDashWater() {
+    $('#waterTotal').textContent = fmtL(totH2O);
+    // the pool icon fills in proportion to an olympic pool; never fully empty so the fill is visible
+    const frac = Math.min(1, totH2O / WF.pool), h = totH2O > 0 ? Math.max(1.5, frac * 44) : 0;
+    const pf = $('#poolFill'); pf.setAttribute('y', 50 - h); pf.setAttribute('height', h);
+    const perDay = totH2O / spanDays;
+    const years = perDay > 0 ? WF.pool / perDay / 365 : Infinity;
+    $('#waterFacts').innerHTML = [
+      `≈ <b>${bottles(totH2O)}</b>`,
+      `Średnio <b>${fmtL(totH2O / days.length)}</b> na dzień aktywny, <b>${fmtL(totH2O / turns.length)}</b> na prompt`,
+      `Rekord: <b>${fmtL(maxDayH2O)}</b> (${fmtDayMed(recordWaterDay)})`,
+    ].map(x => `<li>${x}</li>`).join('');
+    const yearsTxt = isFinite(years) ? `${fmtNum(years)} ${plural(years, 'rok', 'lata', 'lat')}` : '–';
+    const tipHtml = `<b>${fmtL(totH2O)}</b> to<br><b>${poolsText(totH2O)}</b>`
+      + `<br><span class="m">Basen olimpijski: 50 × 25 × 2 m = ${fmtNum(WF.pool / 1000)} m³ (${fmtNum(WF.pool)} l).`
+      + `<br>W obecnym tempie (${fmtL(perDay)} dziennie) cały basen napełnisz za ok. ${yearsTxt}.</span>`;
+    const big = $('#waterBig');
+    big.onmousemove = e => showTip(tipHtml, e);
+    big.onmouseleave = hideTip;
+    big.title = '';
+    big.setAttribute('aria-label', `${fmtL(totH2O)}, czyli ${poolsText(totH2O)}`);
+    $('#waterNote').textContent = `Szacunek z tokenów: ${WF.out} l na mln tokenów wyjścia, ${WF.in} l wejścia, ${WF.cw} l zapisu cache, ${WF.cr} l odczytu cache (z subagentami). Przelicznik w woda.json; publiczne szacunki różnią się nawet dziesięciokrotnie.`;
+  }
+
+  // ---------- dashboard: calendar heatmap ----------
+  let heatCells = [];
+  function renderHeat() {
+    const host = $('#heat');
+    const W = Math.max(260, host.clientWidth);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    let last = parseDay(lastDay); if (today > last) last = today;
+    let start = parseDay(firstDay);
+    const yearAgo = new Date(last); yearAgo.setDate(yearAgo.getDate() - 364);
+    if (start < yearAgo) start = yearAgo;
+    start.setDate(start.getDate() - (start.getDay() + 6) % 7);   // Monday
+    const minStart = new Date(last); minStart.setDate(minStart.getDate() - (minStart.getDay() + 6) % 7 - 7 * 15);
+    if (start > minStart) start = minStart;                     // at least 16 weeks, so the grid is not tiny
+    const weeks = Math.round((last - start) / (7 * 864e5)) + 1;
+    const lw = 22, top = 16, gap = 3;
+    const cell = Math.max(8, Math.min(18, Math.floor((W - lw) / weeks) - gap));
+    const Wt = lw + weeks * (cell + gap), H = top + 7 * (cell + gap);
+    const levels = [0.25, 0.45, 0.7, 1];
+    const lvl = n => n ? levels[Math.min(3, Math.floor(n / maxDayN * 4 - 1e-9))] : 0;
+    heatCells = [];
+    let s = `<svg viewBox="0 0 ${Wt} ${H}" style="width:${Wt}px;max-width:100%" height="${H}" role="img" aria-label="Kalendarz liczby promptów">`;
+    ['Pn', '', 'Śr', '', 'Pt', '', ''].forEach((l, i) => { if (l) s += `<text x="0" y="${top + i * (cell + gap) + cell - 2}">${l}</text>`; });
+    let lastMonth = -1;
+    for (let w = 0; w < weeks; w++) {
+      for (let d = 0; d < 7; d++) {
+        const dt = new Date(start); dt.setDate(start.getDate() + w * 7 + d);
+        if (dt > last) continue;
+        if (d === 0 || dt.getDate() === 1) {
+          if (dt.getMonth() !== lastMonth && (dt.getDate() <= 7 || w === 0)) {
+            lastMonth = dt.getMonth();
+            s += `<text x="${lw + w * (cell + gap)}" y="10">${dt.toLocaleDateString('pl-PL', { month: 'short' })}</text>`;
+          }
+        }
+        const k = dayKey(dt), st = dayStat.get(k), n = st ? st.n : 0;
+        const x = lw + w * (cell + gap), y = top + d * (cell + gap);
+        const sel = k === selDay;
+        s += `<rect class="cell" data-i="${heatCells.length}" x="${x}" y="${y}" width="${cell}" height="${cell}" rx="2" `
+          + (n ? `fill="var(--accent)" fill-opacity="${lvl(n)}"` : `fill="var(--grid)"`)
+          + (sel ? ` stroke="var(--ink)" stroke-width="1.5"` : '') + '/>';
+        heatCells.push(k);
+      }
+    }
+    host.innerHTML = s + '</svg>';
+    $('#heatLegend').innerHTML = 'mniej <i style="background:var(--grid)"></i>'
+      + levels.map(o => `<i style="background:var(--accent);opacity:${o}"></i>`).join('') + ' więcej';
+  }
+  $('#heat').addEventListener('mousemove', e => {
+    const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return hideTip();
+    showTip(dayTip(heatCells[+i]), e);
+  });
+  $('#heat').addEventListener('mouseleave', hideTip);
+  $('#heat').addEventListener('click', e => {
+    const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return;
+    if (byDay.has(heatCells[+i])) openDay(heatCells[+i]);
+  });
+
+  // ---------- dashboard: daily bars ----------
+  let barList = [];
+  function renderBars() {
+    const host = $('#bars');
+    const W = Math.max(280, host.clientWidth), H = 220;
+    const m = { l: 34, r: 6, t: 22, b: 24 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+
+    const end = new Date(); end.setHours(0, 0, 0, 0);
+    const lastData = parseDay(lastDay);
+    if (lastData > end) end.setTime(lastData.getTime());
+    const start = range === 'all' ? parseDay(firstDay) : new Date(end.getFullYear(), end.getMonth(), end.getDate() - range + 1);
+
+    barList = [];
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      const k = dayKey(d);
+      barList.push({ k, n: dayStat.has(k) ? dayStat.get(k).n : 0 });
+    }
+    const max = Math.max(1, ...barList.map(b => b.n));
+    const step = niceStep(Math.max(1, max / 4));
+    const yMax = Math.ceil(max / step) * step;
+    const y = v => m.t + ih - v / yMax * ih;
+    const colW = iw / barList.length;
+    const bw = Math.max(1, Math.min(28, colW - 2));
+
+    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Liczba promptów dziennie">`;
+    for (let v = 0; v <= yMax; v += step) {
+      s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}" stroke-width="1"/>`;
+      s += `<text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+    }
+    const every = Math.max(1, Math.ceil(46 / colW));
+    barList.forEach((b, i) => {
+      const x = m.l + i * colW + (colW - bw) / 2;
+      const isSel = b.k === selDay;
+      if (b.n) s += `<path d="${barPath(x, y(b.n), bw, ih - (y(b.n) - m.t), 4)}" fill="var(--accent)"${isSel ? ' stroke="var(--ink)" stroke-width="2"' : ''}/>`;
+      if (isSel && b.n) s += `<text class="val" x="${x + bw / 2}" y="${y(b.n) - 6}" text-anchor="middle">${b.n}</text>`;
+      if ((barList.length - 1 - i) % every === 0)
+        s += `<text x="${m.l + i * colW + colW / 2}" y="${H - 6}" text-anchor="middle"${isSel ? ' style="fill:var(--ink);font-weight:600"' : ''}>${fmtDayShort(b.k)}</text>`;
+      s += `<rect class="hit" data-i="${i}" x="${m.l + i * colW}" y="${m.t}" width="${colW}" height="${ih}"/>`;
+    });
+    s += '</svg>';
+    host.innerHTML = s;
+  }
+  $('#bars').addEventListener('mousemove', e => {
+    const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return hideTip();
+    showTip(dayTip(barList[+i].k), e);
+  });
+  $('#bars').addEventListener('mouseleave', hideTip);
+  $('#bars').addEventListener('click', e => {
+    const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return;
+    const k = barList[+i].k;
+    if (byDay.has(k)) openDay(k);
+  });
+  $('#range').addEventListener('click', e => {
+    const r = e.target.dataset.r; if (!r) return;
+    range = r === 'all' ? 'all' : +r; renderBars(); syncRange();
+  });
+  function syncRange() {
+    document.querySelectorAll('#range button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.r === String(range))));
+  }
+
+  // ---------- dashboard: projects ----------
+  function renderProjects() {
+    const rows = projOrder.map(p => {
+      const ts = turns.filter(t => t.p === p), cs = corrStats(ts);
+      return { p, n: ts.length, d: new Set(ts.map(t => t.day)).size, dur: sum(ts, t => t.dur), usd: sum(ts, t => t.usd), h2o: sum(ts, t => t.h2o), cs };
+    });
+    $('#projTbl').innerHTML = '<thead><tr><th>Projekt</th><th class="n">Prompty</th><th class="n">Dni</th><th class="n">Czas agenta</th>'
+      + '<th class="n">Koszt</th><th class="n">Woda</th><th class="n">Przerwane / awarie</th></tr></thead><tbody>'
+      + rows.map(r => `<tr><td class="pj"><span class="dot" style="background:${projColor(r.p)}"></span>${esc(r.p)}</td>`
+        + `<td class="n">${fmtNum(r.n)}</td><td class="n">${r.d}</td><td class="n">${fmtDur(r.dur)}</td><td class="n">${fmtUsd(r.usd)}</td>`
+        + `<td class="n">${fmtL(r.h2o)}</td><td class="n">${fmtPct(r.cs.n, r.cs.d)}</td></tr>`).join('')
+      + '</tbody>';
+  }
+
+  function renderDash() {
+    renderBars(); renderHeat();
+  }
+
+  // ---------- day view: list of days ----------
+  function buildDayList() {
+    let h = '', month = '';
+    [...days].reverse().forEach(k => {
+      const d = parseDay(k), mo = d.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+      if (mo !== month) { month = mo; h += `<h3>${esc(mo)}</h3>`; }
+      const st = dayStat.get(k);
+      h += `<button data-day="${k}" title="${esc(fmtDayLong(k))}"><span class="dn">${d.toLocaleDateString('pl-PL', { weekday: 'short' })} ${fmtDayShort(k)}</span>`
+        + `<span class="dc">${st.n} · ${fmtL(st.h2o)}</span><span class="db"><i style="width:${(st.n / maxDayN * 100).toFixed(1)}%"></i></span></button>`;
+    });
+    $('#dayList').innerHTML = h;
+  }
+  $('#dayList').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) openDay(b.dataset.day, true); });
+  function syncDayList() {
+    let cur = null;
+    document.querySelectorAll('#dayList button').forEach(b => {
+      const on = b.dataset.day === selDay; b.setAttribute('aria-current', String(on)); if (on) cur = b;
+    });
+    if (cur) {
+      const list = $('#dayList'), r = cur.getBoundingClientRect(), lr = list.getBoundingClientRect();
+      if (r.top < lr.top || r.bottom > lr.bottom) list.scrollTop += r.top - lr.top - lr.height / 2 + r.height / 2;
+    }
+  }
+
+  // ---------- day view: KPIs + water tube ----------
+  function renderKpis() {
+    const items = byDay.get(selDay) || [];
+    const durs = items.map(t => t.dur);
+    const usd = sum(items, t => t.usd);
+    const cs = corrStats(items);
+    const k = [
+      ['Prompty', fmtNum(items.length)],
+      ['Aktywny czas agenta (suma)', fmtDur(sum(durs, x => x))],
+      ['Mediana czasu odpowiedzi', fmtDur(median(durs))],
+      ['Najdłuższa odpowiedź', fmtDur(Math.max(0, ...durs))],
+      ['Szacowany koszt (ceny API)', fmtUsd(usd) + (items.some(t => t.cu) ? '*' : ''), 'mediana ' + fmtUsd(median(items.map(t => t.usd))) + ' / prompt'],
+      ['Przerwane / awarie', fmtPct(cs.n, cs.d), corrSub(cs), null, corrBreakdown(items)],
+      ['Śr. długość promptu', fmtNum(sum(items, t => t.c) / Math.max(1, items.length)) + ' zn.'],
+      ['Tokeny wyjściowe', fmtNum(sum(items, t => t.o))],
+    ];
+    $('#kpis').innerHTML = k.map(kpiHtml).join('');
+    renderTube(sum(items, t => t.h2o));
+  }
+  // The tube's scale is the same for every day (rounded up from the record day), so days can be compared by eye.
+  const tubeStep = niceStep(Math.max(maxDayH2O, 0.01) / 4);
+  const tubeMax = Math.ceil(Math.max(maxDayH2O, 0.01) / tubeStep) * tubeStep;
+  function buildTubeScale() {
+    let marks = '', labels = '<span style="bottom:0">0 l</span>';
+    for (let v = tubeStep; v <= tubeMax + 1e-9; v += tubeStep) {
+      const p = (v / tubeMax * 100).toFixed(2);
+      marks += `<span class="mark" style="bottom:${p}%"></span>`;
+      labels += `<span style="bottom:${p}%">${fmtL(v).replace(' l', '')}</span>`;
+    }
+    $('#tube').insertAdjacentHTML('afterbegin', marks);
+    $('#tubeScale').innerHTML = labels;
+  }
+  function renderTube(l) {
+    // the CSS transition makes the water rise or fall when switching days
+    $('#tubeFill').style.height = Math.min(100, l / tubeMax * 100).toFixed(2) + '%';
+    $('#dayWater').textContent = fmtL(l);
+    $('#dayWaterSub').innerHTML = l ? `≈ ${bottles(l)}<br>${fmtNum(l / maxDayH2O * 100)}% rekordu` : 'brak promptów';
+    $('#waterPanel').setAttribute('aria-label', `Woda tego dnia: ${fmtL(l)}`);
+    $('#waterPanel').title = `${fmtL(l)} = ${poolsText(l)}\nSkala: rekordowy dzień ${fmtL(maxDayH2O)} (${fmtDayMed(recordWaterDay)})`;
+  }
+
+  // ---------- day view: timeline ----------
+  function renderTimeline() {
+    const host = $('#timeline');
+    const items = (byDay.get(selDay) || []).slice().sort((a, b) => a.start - b.start);
+    if (!items.length) { host.innerHTML = '<p class="empty">Brak promptów tego dnia.</p>'; return; }
+
+    const W = Math.max(280, host.clientWidth);
+    const narrow = W < 560;
+    const labelW = narrow ? 0 : Math.min(170, W * 0.22);
+    const m = { l: labelW + 8, r: 10, t: 22, b: 8 };
+    const iw = W - m.l - m.r;
+    const H1 = 3600e3;
+    const dayEnd = +parseDay(selDay) + 24 * H1;   // turns running past midnight are clipped
+    items.forEach(t => t._vis = Math.max(+t.start, Math.min(t.segs[t.segs.length - 1][1], dayEnd)));
+    let t0 = Math.min(...items.map(t => +t.start)), t1 = Math.max(...items.map(t => t._vis));
+    const d0 = new Date(t0); d0.setMinutes(0, 0, 0); t0 = +d0;
+    const d1 = new Date(t1); if (d1.getMinutes() || d1.getSeconds() || d1.getMilliseconds()) { d1.setMinutes(0, 0, 0); d1.setTime(+d1 + H1); } t1 = +d1;
+    if (t1 - t0 < H1) t1 = t0 + H1;
+    const x = t => m.l + (t - t0) / (t1 - t0) * iw;
+    const minMs = (t1 - t0) / iw * 5;
+
+    const rowH = 14, rowGap = 5, blockGap = narrow ? 26 : 12;
+    const projs = projOrder.filter(p => items.some(t => t.p === p));
+    const blocks = [];
+    let yCur = m.t + 6;
+    projs.forEach(p => {
+      const its = items.filter(t => t.p === p);
+      const rowsEnd = [];
+      its.forEach(t => {
+        let r = rowsEnd.findIndex(e => e <= +t.start);
+        if (r < 0) { r = rowsEnd.length; rowsEnd.push(0); }
+        rowsEnd[r] = Math.max(t._vis, +t.start + minMs) + minMs;
+        t._row = r;
+      });
+      if (narrow) yCur += 14;
+      const h = rowsEnd.length * (rowH + rowGap) - rowGap;
+      blocks.push({ p, its, y: yCur, h });
+      yCur += h + blockGap;
+    });
+    const H = yCur - blockGap + m.b + 6;
+
+    const spanH = (t1 - t0) / H1;
+    const hStep = [1, 2, 3, 4, 6, 12].find(s => iw / spanH * s >= 48) || 24;
+    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Oś czasu promptów">`;
+    for (let t = t0; t <= t1; t += H1) {
+      const d = new Date(t);
+      if (d.getHours() % hStep) continue;
+      s += `<line x1="${x(t)}" x2="${x(t)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/>`;
+      s += `<text x="${x(t)}" y="${m.t - 8}" text-anchor="middle">${pad(d.getHours())}:00</text>`;
+    }
+    blocks.forEach((b, bi) => {
+      if (bi) s += `<line x1="${narrow ? m.l : 0}" x2="${W - m.r}" y1="${b.y - blockGap / 2 - (narrow ? 14 : 0)}" y2="${b.y - blockGap / 2 - (narrow ? 14 : 0)}" stroke="var(--grid)"/>`;
+      const label = b.p.length > labelW / 7 && !narrow ? b.p.slice(0, Math.floor(labelW / 7) - 1) + '…' : b.p;
+      s += narrow
+        ? `<text class="lane" x="${m.l}" y="${b.y - 4}"><title>${esc(b.p)}</title>${esc(label)} · ${b.its.length}</text>`
+        : `<text class="lane" x="0" y="${b.y + b.h / 2 + 4}"><title>${esc(b.p)}</title>${esc(label)}</text>`;
+      b.its.forEach(t => {
+        const by = b.y + t._row * (rowH + rowGap);
+        const sel = selTurn === t.id;
+        const stroke = sel ? ' stroke="var(--ink)" stroke-width="2"'
+          : t.i ? ' stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="3 2"' : '';
+        if (t.segs.length > 1)   // idle gap(s): thin connector between activity segments
+          s += `<line x1="${x(+t.start)}" x2="${x(t._vis)}" y1="${by + rowH / 2}" y2="${by + rowH / 2}" stroke="${projColor(t.p)}" stroke-width="1.5" stroke-dasharray="2 3"/>`;
+        t.segs.forEach(([a, z]) => {
+          if (a >= dayEnd) return;
+          const sx = x(a), sw = Math.max(4, x(Math.min(z, dayEnd)) - sx);
+          s += `<rect x="${sx}" y="${by}" width="${sw}" height="${rowH}" rx="3" fill="${projColor(t.p)}"${stroke}/>`;
+        });
+        const hx = x(+t.start), hw = Math.max(4, x(t._vis) - hx);
+        s += `<rect class="bar-t" data-t="${t.id}" x="${hx - 2}" y="${by - 2}" width="${hw + 4}" height="${rowH + 4}" fill="transparent"/>`;
+      });
+    });
+    s += '</svg>';
+    host.innerHTML = s;
+  }
+  function turnTip(t) {
+    return `<b>${fmtTime(t.start)} – ${fmtEnd(t)}</b> · ${fmtDur(t.dur)}${t.i ? ' <span class="tag">przerwany</span>' : ''}`
+      + (t.segs.length > 1 ? `<br><span class="m">Zegarowo ${fmtDur(t.wall)}; ${t.segs.length} odcinki aktywności, przerwy &gt; ${GAP} min nieliczone</span>` : '')
+      + `<br><span class="dot" style="background:${projColor(t.p)}"></span>${esc(t.p)} · <b>${esc(fmtModels(t.m))}</b>`
+      + `<br><span class="m">Prompt: ${fmtNum(t.c)} zn. (${fmtNum(t.w)} słów)${t.img ? `, obrazy: ${t.img}` : ''}`
+      + `<br>Odpowiedź: ${fmtNum(t.o)} tokenów, narzędzia: ${t.t}`
+      + `<br>Szacowany koszt: <b>${fmtUsd(t.usd)}</b>${t.usds ? ` (w tym subagenci ${fmtUsd(t.usds)})` : ''}${t.cu ? ' – niepełny, brak ceny modelu' : ''}`
+      + `<br>Woda: ${fmtL(t.h2o)}</span>`
+      + (t.k ? `<br><span class="corr">${CORR_MARK[t.k]}</span> <span class="m">${esc(corrLabel(t))}</span>` : '')
+      + (t.x ? `<div class="x">„${esc(t.x)}”</div>` : '');
+  }
+  $('#timeline').addEventListener('mousemove', e => {
+    const id = e.target.dataset && e.target.dataset.t; if (id === undefined) return hideTip();
+    showTip(turnTip(turns[+id]), e);
+  });
+  $('#timeline').addEventListener('mouseleave', hideTip);
+  $('#timeline').addEventListener('click', e => {
+    const id = e.target.dataset && e.target.dataset.t; if (id === undefined) return;
+    selTurn = +id; renderTimeline(); renderTable();
+    const row = document.querySelector(`#tbl tr[data-t="${id}"]`);
+    if (row) row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  });
+
+  // ---------- day view: table ----------
+  const COLS = [
+    ['start', 'Start', 't'], ['end', 'Koniec', 't'], ['dur', 'Czas', 'n'], ['p', 'Projekt', ''], ['m', 'Model', ''],
+    ['c', 'Znaki', 'n'], ['o', 'Tokeny', 'n'], ['t', 'Narzędzia', 'n'], ['usd', 'Koszt', 'n'], ['h2o', 'Woda', 'n'], ['k', 'Problem', 'c'], ['x', 'Prompt', 'x'],
+  ];
+  const costTitle = t => `Wejście ${fmtNum(t.in)} · odczyt cache ${fmtNum(t.cr)} · zapis cache ${fmtNum(t.cw)} · wyjście ${fmtNum(t.o)} tokenów`
+    + (t.usds ? `\nW tym subagenci: ${fmtUsd(t.usds)}` : '') + (t.cu ? '\nNiepełny: brak ceny dla części odpowiedzi' : '');
+  function renderTable() {
+    const items = (byDay.get(selDay) || []).slice().sort((a, b) => {
+      const va = a[sortKey], vb = b[sortKey];
+      return (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * sortDir;
+    });
+    let h = '<thead><tr>' + COLS.map(([k, l, c]) =>
+      `<th class="${c === 'n' || c === 'c' ? c : ''}" data-k="${k}">${l}${sortKey === k ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr></thead><tbody>';
+    items.forEach(t => {
+      h += `<tr data-t="${t.id}"${selTurn === t.id ? ' class="sel"' : ''}>`
+        + `<td class="t">${fmtTime(t.start)}</td><td class="t">${fmtEnd(t)}</td>`
+        + `<td class="n" title="Zegarowo: ${fmtDur(t.wall)}">${fmtDur(t.dur)}${t.segs.length > 1 ? '*' : ''}</td>`
+        + `<td class="pj"><span class="dot" style="background:${projColor(t.p)}"></span>${esc(t.p)}</td>`
+        + `<td class="pj" title="${esc(t.m || '')}">${esc(fmtModels(t.m))}</td>`
+        + `<td class="n">${fmtNum(t.c)}</td><td class="n">${fmtNum(t.o)}</td><td class="n">${t.t}</td>`
+        + `<td class="n" title="${esc(costTitle(t))}">${fmtUsd(t.usd)}${t.cu ? '*' : ''}</td>`
+        + `<td class="n">${fmtL(t.h2o)}</td>`
+        + `<td class="c">${t.k ? `<span class="corr" title="${esc(corrLabel(t))}">${CORR_MARK[t.k]}</span>` : ''}</td>`
+        + `<td class="x">${esc(t.x)}${t.i ? '<span class="tag">przerwany</span>' : ''}</td></tr>`;
+    });
+    $('#tbl').innerHTML = h + '</tbody>';
+  }
+  $('#tbl').addEventListener('click', e => {
+    const th = e.target.closest('th');
+    if (th) { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : 1; sortKey = k; renderTable(); return; }
+    const tr = e.target.closest('tr[data-t]');
+    if (tr) { selTurn = +tr.dataset.t; renderTimeline(); renderTable(); }
+  });
+
+  // ---------- day navigation ----------
+  const pick = $('#dayPick');
+  pick.min = firstDay; pick.max = lastDay;
+  pick.addEventListener('change', () => { if (pick.value) openDay(pick.value, true); });
+  const prevDay = () => { const i = days.indexOf(selDay); return i < 0 ? days.filter(d => d < selDay).pop() : days[i - 1]; };
+  const nextDay = () => { const i = days.indexOf(selDay); return i < 0 ? days.find(d => d > selDay) : days[i + 1]; };
+  $('#prev').addEventListener('click', () => { const p = prevDay(); if (p) openDay(p, true); });
+  $('#next').addEventListener('click', () => { const n = nextDay(); if (n) openDay(n, true); });
+  addEventListener('keydown', e => {
+    if (view !== 'day' || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) return;
+    const k = e.key === 'ArrowLeft' ? prevDay() : e.key === 'ArrowRight' ? nextDay() : null;
+    if (k) { e.preventDefault(); openDay(k, true); }
+  });
+
+  function renderDay() {
+    pick.value = selDay;
+    $('#dayTitle').textContent = fmtDayLong(selDay);
+    $('#prev').disabled = selDay <= firstDay;
+    $('#next').disabled = selDay >= lastDay;
+    syncDayList(); renderKpis(); renderTimeline(); renderTable();
+  }
+
+  // ---------- prompts view: what and how you write ----------
+  // tw = your own words of the prompt (lowercase, no pastes / code / links / paths), built by build-report.ps1
+  const STOP = new Set(('a aby ale albo ani aż az bardzo bez bo by być byc był byl była byla było bylo były byly bym ci cię cie co coś cos czy '
+    + 'dla do gdy gdzie go i ich ile im jak jaka jaki jakie jako je jego jej jest jestem jeszcze jeśli jesli jeżeli jezeli już juz ją ja '
+    + 'kiedy kto która ktora które ktore który ktory ma mam mi mnie mną mna może moze mój moj moja moje mu my na nad nam nas nawet nic nie niech '
+    + 'niż niz no ok okej okey dobra teraz itd o od oraz po pod przez przy są sa się sie ta tak tam te tego tej ten też tez to tu tylko tym u w we więc wiec z za ze że żeby zeby '
+    + 'the an and or of to in on for is it this that be with as at by from are was you me my we not do can if so').split(' '));
+  const words = t => t.tw ? t.tw.split(' ') : [];
+  let pRange = 'all', pN = 2, pSel = null;   // pSel = { kind: 'word'|'phrase'|'open'|'cmd', text }
+  $('#pProj').innerHTML = '<option value="">Wszystkie projekty</option>' + projOrder.map(p => `<option>${esc(p)}</option>`).join('');
+
+  function promptSet() {
+    const proj = $('#pProj').value;
+    let from = '';
+    if (pRange !== 'all') {
+      const end = new Date(); end.setHours(0, 0, 0, 0);
+      if (parseDay(lastDay) > end) end.setTime(+parseDay(lastDay));
+      from = dayKey(new Date(end.getFullYear(), end.getMonth(), end.getDate() - pRange + 1));
+    }
+    return turns.filter(t => t.day >= from && (!proj || t.p === proj));
+  }
+  // document frequency: in how many prompts a key occurs (one long prompt does not dominate)
+  function topKeys(ts, keysOf, limit) {
+    const c = new Map();
+    ts.forEach(t => new Set(keysOf(t)).forEach(k => c.set(k, (c.get(k) || 0) + 1)));
+    return [...c].filter(([, n]) => n >= 2 || c.size <= limit).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, limit);
+  }
+  function blist(host, rows, kind, empty) {
+    if (!rows.length) { $(host).innerHTML = `<p class="note" style="grid-column:1/-1">${empty}</p>`; return; }
+    const max = rows[0][1];
+    $(host).innerHTML = rows.map(([k, n]) => {
+      const on = pSel && pSel.kind === kind && pSel.text === k;
+      return `<button data-kind="${kind}" data-text="${esc(k)}" aria-pressed="${on}" title="${esc(k)}: w ${n} ${plural(n, 'prompcie', 'promptach', 'promptach')}">`
+        + `<i style="width:${(n / max * 100).toFixed(1)}%"></i><span>${esc(k)}</span></button><span class="n">${n}</span>`;
+    }).join('');
+  }
+  function vbars(host, labels, values, tipFn, every) {
+    const el = $(host), W = Math.max(260, el.clientWidth), H = 170, m = { l: 30, r: 4, t: 14, b: 22 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b, max = Math.max(1, ...values);
+    const step = niceStep(Math.max(1, max / 4)), yMax = Math.ceil(max / step) * step;
+    const y = v => m.t + ih - v / yMax * ih, colW = iw / values.length, bw = Math.max(2, Math.min(36, colW - 4));
+    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img">`;
+    for (let v = 0; v <= yMax; v += step)
+      s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}"/><text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+    values.forEach((v, i) => {
+      const x = m.l + i * colW + (colW - bw) / 2;
+      if (v) s += `<path d="${barPath(x, y(v), bw, ih - (y(v) - m.t), 3)}" fill="var(--accent)"/>`;
+      if (i % (every || 1) === 0) s += `<text x="${m.l + i * colW + colW / 2}" y="${H - 6}" text-anchor="middle">${labels[i]}</text>`;
+      s += `<rect class="hit" data-i="${i}" x="${m.l + i * colW}" y="${m.t}" width="${colW}" height="${ih}"/>`;
+    });
+    el.innerHTML = s + '</svg>';
+    el.onmousemove = e => { const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return hideTip(); showTip(tipFn(+i), e); };
+    el.onmouseleave = hideTip;
+  }
+  const LEN_B = [[1, 5], [6, 10], [11, 20], [21, 50], [51, 100], [101, 200], [201, Infinity]];
+
+  function renderPrompts() {
+    document.querySelectorAll('#pRange button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.r === String(pRange))));
+    document.querySelectorAll('#pN button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === pN)));
+    const ts = promptSet(), txt = ts.filter(t => !t.cmd), stop = $('#pStop').checked;
+    $('#pCount').textContent = `${fmtNum(ts.length)} ${plural(ts.length, 'prompt', 'prompty', 'promptów')}`;
+    const lens = txt.map(t => words(t).length), vocab = new Set(txt.flatMap(words));
+    const pct = f => fmtPct(ts.filter(f).length, ts.length);
+    $('#pKpis').innerHTML = [
+      ['Prompty', fmtNum(ts.length), `${fmtNum(txt.length)} pisanych, ${fmtNum(ts.length - txt.length)} komend`],
+      ['Mediana długości', fmtNum(median(lens)) + ' słów', `najdłuższy: ${fmtNum(Math.max(0, ...lens))} słów`],
+      ['Pytania', pct(t => t.q), 'prompty ze znakiem „?”'],
+      ['Unikalne słowa', fmtNum(vocab.size), `łącznie ${fmtNum(sum(lens, x => x))} słów`],
+      ['Z wklejką', pct(t => t.pst), 'wklejony tekst, log lub błąd'],
+      ['Z obrazem', pct(t => t.img > 0), 'zrzut ekranu lub zdjęcie'],
+      ['Przerwane / awarie', pct(t => t.k === 2), `sygnały w treści: ${ts.filter(t => t.k === 1).length}`],
+      ['Śr. koszt promptu', fmtUsd(sum(ts, t => t.usd) / Math.max(1, ts.length)), `woda: ${fmtL(sum(ts, t => t.h2o) / Math.max(1, ts.length))} na prompt`],
+    ].map(kpiHtml).join('');
+
+    blist('#pWords', topKeys(txt, t => words(t).filter(w => w.length > 1 && !(stop && STOP.has(w))), 20), 'word', 'Za mało promptów.');
+    blist('#pPhrases', topKeys(txt, t => {
+      const w = words(t), out = [];
+      for (let i = 0; i + pN <= w.length; i++) {
+        const g = w.slice(i, i + pN);
+        if (g[0].length < 2 || g[pN - 1].length < 2) continue;
+        if (stop && (STOP.has(g[0]) || STOP.has(g[pN - 1]))) continue;   // "na tym", "to jest" - no content
+        out.push(g.join(' '));
+      }
+      return out;
+    }, 20).filter(([, n]) => n >= 2), 'phrase', 'Żadne sformułowanie nie powtórzyło się w co najmniej dwóch promptach.');
+    blist('#pOpen', topKeys(txt, t => { const w = words(t); return w.length ? [w.slice(0, 2).join(' ')] : []; }, 12), 'open', 'Za mało promptów.');
+    blist('#pCmd', topKeys(ts.filter(t => t.cmd), t => [t.cmd], 12), 'cmd', 'Brak komend (/…) w tym okresie.');
+
+    const lenCnt = LEN_B.map(([a, b]) => lens.filter(n => n >= a && n <= b).length);
+    vbars('#pLen', LEN_B.map(([a, b]) => b === Infinity ? `${a}+` : `${a}–${b}`), lenCnt,
+      i => `<b>${LEN_B[i][1] === Infinity ? LEN_B[i][0] + '+' : LEN_B[i][0] + '–' + LEN_B[i][1]} słów</b><br>${lenCnt[i]} ${plural(lenCnt[i], 'prompt', 'prompty', 'promptów')}`);
+    const hours = Array.from({ length: 24 }, (_, h) => ts.filter(t => t.start.getHours() === h).length);
+    vbars('#pHour', hours.map((_, h) => pad(h)), hours, h => `<b>${pad(h)}:00–${pad(h)}:59</b><br>${hours[h]} ${plural(hours[h], 'prompt', 'prompty', 'promptów')}`, 3);
+    renderMatches(ts);
+  }
+
+  const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  function renderMatches(ts) {
+    const card = $('#pMatchCard');
+    if (!pSel) { card.hidden = true; return; }
+    card.hidden = false;
+    const key = ' ' + pSel.text + ' ';
+    const hit = pSel.kind === 'cmd' ? (t => t.cmd === pSel.text)
+      : pSel.kind === 'open' ? (t => (t.tw + ' ').startsWith(pSel.text + ' '))
+      : (t => (' ' + (t.tw || '') + ' ').includes(key));
+    const list = ts.filter(hit).sort((a, b) => b.start - a.start);
+    $('#pMatchTitle').textContent = `„${pSel.text}” – ${list.length} ${plural(list.length, 'prompt', 'prompty', 'promptów')}`;
+    // highlight in the original excerpt: same words, any punctuation or case in between
+    let rx = null;
+    if (pSel.kind !== 'cmd') { try { rx = new RegExp('(' + pSel.text.split(' ').map(reEsc).join('[^\\p{L}]+') + ')', 'giu'); } catch (e) { rx = null; } }
+    $('#pMatch').innerHTML = list.slice(0, 200).map(t => {
+      const x = esc(t.x || '');
+      return `<li data-t="${t.id}"><div class="meta">${fmtDayShort(t.day)} ${pad(t.start.getHours())}:${pad(t.start.getMinutes())} · `
+        + `<span class="dot" style="background:${projColor(t.p)}"></span>${esc(t.p)}</div>${rx ? x.replace(rx, '<mark>$1</mark>') : x}</li>`;
+    }).join('') + (list.length > 200 ? '<li class="meta">… pokazano 200 najnowszych</li>' : '');
+  }
+  $('#viewPrompts').addEventListener('click', e => {
+    const b = e.target.closest('button[data-kind]');
+    if (b) {
+      const sel = { kind: b.dataset.kind, text: b.dataset.text };
+      pSel = pSel && pSel.kind === sel.kind && pSel.text === sel.text ? null : sel;
+      renderPrompts();
+      if (pSel) $('#pMatchCard').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      return;
+    }
+    const li = e.target.closest('li[data-t]');
+    if (li) {
+      // open the prompt in its day, highlighted in the timeline and the table
+      const t = turns[+li.dataset.t];
+      selDay = t.day; selTurn = t.id; openDay(t.day);
+      setTimeout(() => { const row = document.querySelector(`#tbl tr[data-t="${t.id}"]`); if (row) row.scrollIntoView({ block: 'center' }); }, 50);
+    }
+  });
+  $('#pRange').addEventListener('click', e => { const r = e.target.dataset.r; if (!r) return; pRange = r === 'all' ? 'all' : +r; renderPrompts(); });
+  $('#pN').addEventListener('click', e => { const n = e.target.dataset.n; if (!n) return; pN = +n; if (pSel && pSel.kind === 'phrase') pSel = null; renderPrompts(); });
+  $('#pProj').addEventListener('change', renderPrompts);
+  $('#pStop').addEventListener('change', renderPrompts);
+
+  // ---------- static texts ----------
+  $('#summary').textContent = `${fmtNum(turns.length)} promptów w ${days.length} dniach aktywnych (średnio ${(turns.length / days.length).toLocaleString('pl-PL', { maximumFractionDigits: 1 })} dziennie), `
+    + `od ${parseDay(firstDay).toLocaleDateString('pl-PL')} do ${parseDay(lastDay).toLocaleDateString('pl-PL')}. `
+    + `Szacowany koszt łącznie: ${fmtUsd(totUsd)}, woda: ${fmtL(totH2O)}, przerwane lub z awarią: ${fmtPct(allCorr.n, allCorr.d)}.`;
+  $('#foot').textContent = `Wygenerowano ${META.generated ? new Date(META.generated).toLocaleString('pl-PL') : '–'} z ${META.files || '?'} plików transkryptów (${META.sessions || '?'} sesji). Źródło: %USERPROFILE%\\.claude\\projects. `
+    + `Ceny: publiczny cennik LiteLLM, sprawdzone ${META.pricesChecked || '–'} (${META.pricesStatus || '–'}); historia i ręczne korekty w ceny.json. Przelicznik wody: woda.json.`
+    + (META.unknownModels ? ` Brak ceny dla: ${META.unknownModels}.` : '');
+  $('#kpiNote').textContent = 'Koszt = równowartość cen API (wejście, odczyt i zapis cache, wyjście; z subagentami) według cen z dnia promptu – przy planie Team/Max faktyczny rachunek jest inny, służy do porównań. '
+    + 'Przerwane / awarie (●) = przerwałeś klawiszem Esc, zatrzymałeś przy pytaniu o narzędzie, wywołanie API zakończyło się błędem albo nie było żadnej odpowiedzi. '
+    + `Sygnał w treści (○, liczony osobno) = następny prompt w ciągu ${META.corrWindow || 30} min odrzuca odpowiedź, zgłasza, że problem nadal występuje, doprecyzowuje albo pyta o błąd (reguły w reguly.json). `
+    + `Słup wody ma tę samą skalę dla każdego dnia (rekord: ${fmtL(maxDayH2O)}). Strzałki ← → przełączają dni.`;
+  $('#tlNote').textContent = 'Pasek = jeden prompt: od wysłania do ostatniej odpowiedzi Claude przed kolejnym promptem w tej sesji. '
+    + `Przerwy dłuższe niż ${GAP} min (np. nocne czekanie na zgodę) dzielą pasek na odcinki i nie wliczają się do czasu (* w tabeli). `
+    + 'Krótsze oczekiwanie na Twoją zgodę na narzędzia jest wliczone. Przerywana ramka = prompt przerwany.';
+
+  renderDashKpis(); renderDashWater(); renderProjects(); buildDayList(); buildTubeScale(); syncRange();
+  route();
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (view === 'dash') renderDash(); else if (view === 'day') renderTimeline(); else renderPrompts(); }, 150); });
+})();
+</script>
+</body>
+</html>
