@@ -38,7 +38,28 @@ bazy na hostingu obok innych aplikacji:
 
 Baza powinna mieć kodowanie `utf8mb4`. Działa na MySQL 8 i MariaDB 10.5+.
 
-## Uruchomienie lokalne (np. z MariaDB/MySQL z XAMPP-a)
+## Szybki start lokalnie (Windows)
+
+Potrzebne: Node.js 20.12+ i działający MySQL/MariaDB (np. usługa MariaDB albo XAMPP).
+
+Kliknij dwukrotnie `web\start-local.cmd` albo w PowerShellu:
+
+```powershell
+cd web
+.\start-local.ps1
+```
+
+Za pierwszym razem skrypt zapyta o dane do bazy i zapisze je w `web\.env`, potem:
+instaluje zależności, tworzy bazę i tabele, zakłada konto demo z danymi z `..\raport.html`,
+uruchamia stronę i otwiera http://localhost:3000.
+
+- Konto demo: `demo@example.com` / `demo-haslo-123`
+- `-Port 3001`: inny port, `-Prod`: wersja produkcyjna jak na hostingu,
+  `-NoDemo`: bez konta demo, `-NoBrowser`: bez otwierania przeglądarki,
+  `-ResetConfig`: zapytaj ponownie o dane do bazy
+- Na macOS/Linux: `npm install`, uzupełnij `.env`, `node scripts/setup-local.mjs`, `npm run dev`
+
+## Uruchomienie lokalne krok po kroku
 
 1. Utwórz bazę i użytkownika (phpMyAdmin albo konsola):
    ```sql
@@ -78,7 +99,7 @@ się logować na kilka sposobów.
 
 ## Wdrożenie na hosting z cPanelem
 
-Hosting musi mieć w cPanelu **Setup Node.js App** (Node.js 20.9 lub nowszy).
+Hosting musi mieć w cPanelu **Setup Node.js App** (Node.js 20.12 lub nowszy).
 Bez tego Next.js z logowaniem i API nie zadziała na zwykłym hostingu PHP.
 
 1. Lokalnie zbuduj aplikację (na hostingu zwykle brakuje pamięci na build):
@@ -108,12 +129,15 @@ Bez tego Next.js z logowaniem i API nie zadziała na zwykłym hostingu PHP.
 
 ```
 web/
+├── start-local.ps1 / .cmd    # uruchamia wszystko lokalnie
 ├── server.js                  # plik startowy dla Passengera (cPanel)
 ├── db/schema.sql              # tabele aplikacji (cw_turn)
 ├── scripts/
 │   ├── migrate.mjs            # tworzy/aktualizuje tabele (Better Auth + schema.sql)
 │   ├── import-raport.mjs      # wysyła dane z lokalnego raport.html (tymczasowo zamiast agenta)
-│   └── copy-template.mjs      # kopiuje ../report-template.html do templates/
+│   ├── setup-local.mjs        # lokalnie: baza + tabele + konto demo
+│   ├── copy-template.mjs      # kopiuje ../report-template.html do templates/
+│   └── lib/raport-data.mjs    # odczyt danych z raport.html (bez treści promptów)
 └── src/
     ├── lib/
     │   ├── auth-options.mjs   # konfiguracja Better Auth (wspólna dla aplikacji i migracji)

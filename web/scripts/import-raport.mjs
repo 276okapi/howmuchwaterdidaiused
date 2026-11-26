@@ -5,7 +5,7 @@
 //
 // Privacy: prompt text (x, tw) is removed HERE, before anything leaves the computer.
 // Project names are replaced with "projekt 1", "projekt 2"... unless --keep-project-names.
-import { readFileSync } from "node:fs";
+import { readRaport } from "./lib/raport-data.mjs";
 
 const args = process.argv.slice(2);
 const opt = name => {
@@ -27,44 +27,21 @@ if (!key) {
   process.exit(1);
 }
 
-const html = readFileSync(file, "utf8");
-const marker = "const RAW = ";
-const at = html.indexOf(marker);
-if (at < 0) {
-  console.error(`W pliku ${file} nie ma danych raportu`);
-  process.exit(1);
-}
-// the data is one JSON array right after the marker; find its end by bracket matching
-let depth = 0, inStr = false, end = -1;
-for (let i = at + marker.length; i < html.length; i++) {
-  const c = html[i];
-  if (inStr) {
-    if (c === "\\") i++;
-    else if (c === '"') inStr = false;
-  } else if (c === '"') inStr = true;
-  else if (c === "[" || c === "{") depth++;
-  else if (c === "]" || c === "}") {
-    depth--;
-    if (depth === 0) { end = i + 1; break; }
-  }
-}
-const raw = JSON.parse(html.slice(at + marker.length, end));
-
-const projects = new Map();
-const pseudo = p => {
-  if (keepProjects) return p;
-  if (!projects.has(p)) projects.set(p, `projekt ${projects.size + 1}`);
-  return projects.get(p);
-};
-const turns = raw.map(({ x, tw, ...t }) => ({ ...t, p: pseudo(t.p) }));
+const turns = readRaport(file, { keepProjects });
 
 let accepted = 0, rejected = 0;
 for (let i = 0; i < turns.length; i += 1000) {
-  const res = await fetch(`${url}/api/ingest`, {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-api-key": key },
-    body: JSON.stringify({ turns: turns.slice(i, i + 1000) }),
-  });
+  let res;
+  try {
+    res = await fetch(`${url}/api/ingest`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-api-key": key },
+      body: JSON.stringify({ turns: turns.slice(i, i + 1000) }),
+    });
+  } catch (e) {
+    console.error(`Nie mogę połączyć się z ${url}: ${e.cause?.code || e.message}. Czy strona działa?`);
+    process.exit(1);
+  }
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     console.error(`Błąd ${res.status}: ${body.error || res.statusText}`);
