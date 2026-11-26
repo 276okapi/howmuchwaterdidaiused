@@ -1,0 +1,66 @@
+/* Same palette as the report (report-template.html), so login and report look like one site. */
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --border: rgba(11,11,11,.10); --hover: rgba(22,140,80,.09);
+  --water: #1f8fd8; --accent: #17924f; --accent-ink: #0f6e3a; --danger: #c43c3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+    --border: rgba(255,255,255,.10); --hover: rgba(57,135,229,.14);
+    --water: #2b8fd0; --accent: #3987e5; --accent-ink: #7fb2f0; --danger: #e66767;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--accent-ink); }
+h1 { font-size: 22px; font-weight: 650; margin: 0 0 4px; }
+h2 { font-size: 15px; font-weight: 600; margin: 0 0 10px; }
+.sub { color: var(--ink2); margin: 0 0 18px; }
+.muted { color: var(--muted); }
+
+.topnav { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  max-width: 1240px; margin: 0 auto; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--ink2); }
+.topnav b { color: var(--ink); }
+.topnav nav a { color: var(--ink); text-decoration: none; margin-left: 14px; }
+.topnav nav a:hover { text-decoration: underline; }
+
+.wrap { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
+.narrow { max-width: 400px; margin: 7vh auto 48px; padding: 0 16px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+
+form.stack { display: grid; gap: 12px; }
+label { display: grid; gap: 4px; font-size: 13px; color: var(--ink2); }
+input { font: inherit; color: var(--ink); background: var(--page); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; }
+input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 600;
+  border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid transparent; text-decoration: none; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--border); }
+.btn-ghost:hover { background: var(--hover); }
+.btn-danger { background: transparent; color: var(--danger); border-color: var(--border); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-block { width: 100%; }
+
+.divider { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; margin: 16px 0; }
+.divider::before, .divider::after { content: ""; flex: 1; border-top: 1px solid var(--border); }
+.social { display: grid; gap: 8px; }
+
+.error { color: var(--danger); font-size: 13px; margin: 0; }
+.notice { border-left: 3px solid var(--water); background: var(--hover); padding: 10px 12px; border-radius: 6px; margin-bottom: 16px; }
+
+.keys { width: 100%; border-collapse: collapse; font-size: 13px; }
+.keys th, .keys td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--border); }
+.keys th { color: var(--muted); font-weight: 500; }
+code, .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; }
+.newkey { display: flex; gap: 8px; align-items: center; background: var(--page); border: 1px dashed var(--accent);
+  border-radius: 8px; padding: 10px; word-break: break-all; }
+.row { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; }
+.row label { flex: 1; min-width: 200px; }
+pre { background: var(--page); border: 1px solid var(--border); border-radius: 8px; padding: 10px; overflow-x: auto; font-size: 12.5px; }
