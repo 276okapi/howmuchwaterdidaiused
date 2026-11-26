@@ -1,32 +1,43 @@
+/* Bricolage Grotesque (SIL OFL 1.1, see /fonts/BricolageGrotesque-OFL.txt), self-hosted */
+@font-face {
+  font-family: "Bricolage Grotesque Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url(/fonts/bricolage-grotesque-latin-ext-wght-normal.woff2) format("woff2-variations");
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: "Bricolage Grotesque Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url(/fonts/bricolage-grotesque-latin-wght-normal.woff2) format("woff2-variations");
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+
 /* Same palette as the report (report-template.html), so login and report look like one site. */
 :root {
   color-scheme: light;
   --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
   --border: rgba(11,11,11,.10); --hover: rgba(22,140,80,.09);
-  --water: #1f8fd8; --accent: #17924f; --accent-ink: #0f6e3a; --danger: #c43c3b;
+  --water: #1f8fd8; --accent: #17924f;
+  --display: "Bricolage Grotesque Variable", system-ui, sans-serif; --accent-ink: #0f6e3a; --danger: #c43c3b;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
-    --border: rgba(255,255,255,.10); --hover: rgba(57,135,229,.14);
-    --water: #2b8fd0; --accent: #3987e5; --accent-ink: #7fb2f0; --danger: #e66767;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink2: #c3c2b7; --muted: #898781;
+  --border: rgba(255,255,255,.10); --hover: rgba(57,135,229,.14);
+  --water: #2b8fd0; --accent: #3987e5; --accent-ink: #7fb2f0; --danger: #e66767;
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--page); color: var(--ink);
   font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
 a { color: var(--accent-ink); }
-h1 { font-size: 22px; font-weight: 650; margin: 0 0 4px; }
+h1 { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 4px; }
 h2 { font-size: 15px; font-weight: 600; margin: 0 0 10px; }
 .sub { color: var(--ink2); margin: 0 0 18px; }
 .muted { color: var(--muted); }
-
-.topnav { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
-  max-width: 1240px; margin: 0 auto; padding: 10px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--ink2); }
-.topnav b { color: var(--ink); }
-.topnav nav a { color: var(--ink); text-decoration: none; margin-left: 14px; }
-.topnav nav a:hover { text-decoration: underline; }
 
 .wrap { max-width: 760px; margin: 0 auto; padding: 28px 16px 48px; }
 .narrow { max-width: 400px; margin: 7vh auto 48px; padding: 0 16px; }

@@ -3,6 +3,7 @@
 // with bare Node (no TypeScript build step on the hosting).
 import { apiKey } from "@better-auth/api-key";
 import { getPool } from "./db.mjs";
+import { APP_NAME } from "./brand.mjs";
 
 /** Prefix for every table of this project, so it can share an existing database. */
 export const TABLE_PREFIX = "cw_";
@@ -25,7 +26,14 @@ function socialProviders() {
   return p;
 }
 
-export const enabledSocialProviders = () => Object.keys(socialProviders());
+/** Sign-in providers for the login page; `enabled` = credentials are set in .env.
+ *  In development all are listed (unconfigured ones greyed out), in production only working ones. */
+export const SOCIAL_PROVIDERS = ["google", "github"];
+export const socialProviderStatus = () => {
+  const on = Object.keys(socialProviders());
+  const all = SOCIAL_PROVIDERS.map(id => ({ id, enabled: on.includes(id) }));
+  return process.env.NODE_ENV === "production" ? all.filter(p => p.enabled) : all;
+};
 
 /** Personal API keys for the local agent (x-api-key header -> user).
  *  Better Auth stores only a hash of the key, never the key itself. */
@@ -43,7 +51,7 @@ export function apiKeyPlugin() {
  * @returns {import("better-auth").BetterAuthOptions} */
 export function baseOptions() {
   return {
-    appName: "Claude Water Tracker",
+    appName: APP_NAME,
     baseURL: process.env.BETTER_AUTH_URL,
     secret: process.env.BETTER_AUTH_SECRET,
     database: getPool(),

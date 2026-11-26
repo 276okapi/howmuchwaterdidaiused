@@ -7,13 +7,18 @@ import { authClient } from "@/lib/auth-client";
 const PROVIDER_LABEL: Record<string, string> = { google: "Google", github: "GitHub" };
 
 // only same-site paths, never an absolute URL from the query string
-const safeNext = (n: string | null) => (n && n.startsWith("/") && !n.startsWith("//") ? n : "/raport");
+const safeNext = (n: string | null) => (n && n.startsWith("/") && !n.startsWith("//") ? n : "/pulpit");
 
-export default function AuthForm({ mode, providers }: { mode: "login" | "register"; providers: string[] }) {
+type Provider = { id: string; enabled: boolean };
+
+export default function AuthForm({ mode, providers }: { mode: "login" | "register"; providers: Provider[] }) {
   const router = useRouter();
   const next = safeNext(useSearchParams().get("next"));
+  const q = next === "/pulpit" ? "" : `?next=${encodeURIComponent(next)}`;
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [showPw, setShowPw] = useState(false);
+  const register = mode === "register";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,12 +27,11 @@ export default function AuthForm({ mode, providers }: { mode: "login" | "registe
     const f = new FormData(e.currentTarget);
     const email = String(f.get("email") || "").trim();
     const password = String(f.get("password") || "");
-    const res =
-      mode === "register"
-        ? await authClient.signUp.email({ email, password, name: String(f.get("name") || "").trim() || email.split("@")[0] })
-        : await authClient.signIn.email({ email, password });
-    setBusy(false);
+    const res = register
+      ? await authClient.signUp.email({ email, password, name: String(f.get("name") || "").trim() || email.split("@")[0] })
+      : await authClient.signIn.email({ email, password });
     if (res.error) {
+      setBusy(false);
       setError(translate(res.error.code, res.error.message));
       return;
     }
@@ -42,57 +46,83 @@ export default function AuthForm({ mode, providers }: { mode: "login" | "registe
   }
 
   return (
-    <div className="narrow">
-      <p className="muted" style={{ margin: "0 0 6px" }}>💧 Claude Water Tracker</p>
-      <h1>{mode === "login" ? "Zaloguj się" : "Załóż konto"}</h1>
-      <p className="sub">
-        {mode === "login" ? "Twój raport zużycia wody i kosztów pracy z Claude." : "Konto jest potrzebne, żeby wysyłać statystyki z własnego komputera."}
+    <div className="auth-form">
+      <nav className="auth-tabs" aria-label="Logowanie lub rejestracja">
+        <Link href={`/login${q}`} aria-current={register ? undefined : "page"}>Logowanie</Link>
+        <Link href={`/register${q}`} aria-current={register ? "page" : undefined}>Rejestracja</Link>
+      </nav>
+
+      <h2>{register ? "Załóż konto" : "Zaloguj się"}</h2>
+      <p className="lead">
+        {register
+          ? "Konto przypisuje statystyki z Twoich komputerów do Ciebie."
+          : "Zobacz swój raport wody, kosztów i czasu pracy z AI."}
       </p>
-      <div className="card">
-        {providers.length > 0 && (
-          <>
-            <div className="social">
-              {providers.map(p => (
-                <button key={p} type="button" className="btn btn-ghost btn-block" onClick={() => social(p)}>
-                  {mode === "login" ? "Zaloguj przez" : "Zarejestruj przez"} {PROVIDER_LABEL[p] ?? p}
-                </button>
-              ))}
-            </div>
-            <div className="divider">albo e-mailem</div>
-          </>
-        )}
-        <form className="stack" onSubmit={onSubmit}>
-          {mode === "register" && (
-            <label>
-              Nazwa wyświetlana
-              <input name="name" autoComplete="nickname" maxLength={60} />
-            </label>
+
+      {providers.length > 0 && (
+        <>
+          <div className="social">
+            {providers.map(p => (
+              <button
+                key={p.id}
+                type="button"
+                className="btn btn-ghost btn-block"
+                disabled={!p.enabled}
+                title={p.enabled ? undefined : "Brak konfiguracji OAuth"}
+                onClick={() => social(p.id)}
+              >
+                {register ? "Zarejestruj się przez" : "Zaloguj się przez"} {PROVIDER_LABEL[p.id] ?? p.id}
+              </button>
+            ))}
+          </div>
+          {providers.some(p => !p.enabled) && (
+            <p className="hint" style={{ marginTop: 8 }}>
+              Logowanie przez {providers.filter(p => !p.enabled).map(p => PROVIDER_LABEL[p.id] ?? p.id).join(" i ")} będzie
+              dostępne po dodaniu kluczy OAuth w pliku web/.env.
+            </p>
           )}
+          <div className="divider">albo e-mailem</div>
+        </>
+      )}
+
+      <form className="stack" onSubmit={onSubmit}>
+        {register && (
           <label>
-            E-mail
-            <input name="email" type="email" required autoComplete="email" />
+            Nazwa wyświetlana
+            <input name="name" autoComplete="nickname" maxLength={60} placeholder="np. Kuba" />
           </label>
-          <label>
-            Hasło
+        )}
+        <label>
+          E-mail
+          <input name="email" type="email" required autoComplete="email" />
+        </label>
+        <label>
+          Hasło
+          <span className="pw">
             <input
               name="password"
-              type="password"
+              type={showPw ? "text" : "password"}
               required
-              minLength={mode === "register" ? 10 : undefined}
-              autoComplete={mode === "register" ? "new-password" : "current-password"}
+              minLength={register ? 10 : undefined}
+              autoComplete={register ? "new-password" : "current-password"}
             />
-          </label>
-          {error && <p className="error" role="alert">{error}</p>}
-          <button className="btn btn-primary btn-block" disabled={busy}>
-            {busy ? "Chwila…" : mode === "login" ? "Zaloguj się" : "Załóż konto"}
-          </button>
-        </form>
-      </div>
-      <p className="muted" style={{ textAlign: "center" }}>
-        {mode === "login" ? (
-          <>Nie masz konta? <Link href={`/register?next=${encodeURIComponent(next)}`}>Zarejestruj się</Link></>
+            <button type="button" onClick={() => setShowPw(s => !s)} aria-pressed={showPw}>
+              {showPw ? "Ukryj" : "Pokaż"}
+            </button>
+          </span>
+          {register && <span className="hint">Co najmniej 10 znaków.</span>}
+        </label>
+        {error && <p className="error" role="alert">{error}</p>}
+        <button className="btn btn-primary btn-block" disabled={busy}>
+          {busy ? "Chwila…" : register ? "Załóż konto" : "Zaloguj się"}
+        </button>
+      </form>
+
+      <p className="switch">
+        {register ? (
+          <>Masz już konto? <Link href={`/login${q}`}>Zaloguj się</Link></>
         ) : (
-          <>Masz już konto? <Link href={`/login?next=${encodeURIComponent(next)}`}>Zaloguj się</Link></>
+          <>Pierwszy raz tutaj? <Link href={`/register${q}`}>Załóż konto</Link></>
         )}
       </p>
     </div>
@@ -107,6 +137,6 @@ function translate(code: string | undefined, fallback: string | undefined) {
     case "PASSWORD_TOO_SHORT": return "Hasło musi mieć co najmniej 10 znaków.";
     case "PASSWORD_TOO_LONG": return "Hasło jest za długie.";
     case "INVALID_EMAIL": return "Nieprawidłowy adres e-mail.";
-    default: return fallback || "Coś poszło nie tak. Spróbuj ponownie.";
+    default: return fallback || "Nie udało się. Spróbuj ponownie.";
   }
 }

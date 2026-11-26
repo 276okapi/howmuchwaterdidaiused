@@ -7,5 +7,5 @@ export const dynamic = "force-dynamic";
 // (A public landing page and rankings come later.)
 export default async function Home() {
   const session = await getSession();
-  redirect(session ? "/raport" : "/login");
+  redirect(session ? "/pulpit" : "/login");
 }

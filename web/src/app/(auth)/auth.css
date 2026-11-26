@@ -1,0 +1,156 @@
+/* Sign-in / sign-up pages. Palette: water, from deep to surface. */
+.auth {
+  --deep: #0b4f76;
+  --water: #1a86c4;
+  --crest: #5cbfe9;
+  --foam: #e9f4f9;
+  --navy: #0b2c40;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(380px, 1fr);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ---------- left: the jug ---------- */
+.auth-jug {
+  position: relative;
+  overflow: hidden;
+  background: var(--foam);
+  color: var(--navy);
+  padding: 36px 56px;
+  display: flex;
+  flex-direction: column;
+}
+.auth-brand {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--display); font-weight: 650; font-size: 16px; letter-spacing: -.01em;
+}
+.auth-drop {
+  width: 14px; height: 14px;
+  background: var(--water);
+  border-radius: 50% 0 50% 50%;
+  transform: rotate(-45deg);
+}
+.auth-pitch { position: relative; z-index: 2; max-width: 30rem; margin: 9vh 0 48px; }
+.auth-pitch h1 {
+  font-family: var(--display);
+  font-size: clamp(34px, 3.6vw, 54px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -.025em;
+  margin: 0 0 18px;
+  text-wrap: balance;
+}
+.auth-pitch p { font-size: 16px; line-height: 1.55; margin: 0 0 18px; color: #22495f; max-width: 34em; }
+.auth-pitch ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.auth-pitch li { position: relative; padding-left: 20px; font-size: 14.5px; color: #22495f; }
+.auth-pitch li::before {
+  content: ""; position: absolute; left: 2px; top: .55em;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--water);
+}
+
+/* graduations on the right edge of the jug (fixed 60 px step, see AuthShell) */
+.auth-scale { position: absolute; inset: 0 0 0 auto; width: 90px; z-index: 0; pointer-events: none; }
+.auth-scale .mark { position: absolute; right: 0; width: 14px; border-top: 1.5px solid rgba(11, 44, 64, .3); }
+.auth-scale .mark.major { width: 26px; }
+.auth-scale .mark span {
+  position: absolute; right: 34px; top: -.75em;
+  font-family: var(--display); font-size: 12px; font-weight: 500; white-space: nowrap;
+  font-variant-numeric: tabular-nums; color: rgba(11, 44, 64, .55);
+}
+.auth-scale.under { z-index: 1; }
+.auth-scale.under .mark { border-color: rgba(255, 255, 255, .5); }
+.auth-scale.under .mark span { color: rgba(255, 255, 255, .8); }
+
+/* water: a block at the bottom of the column, so it never covers the text;
+   it rises once on load and the surface keeps a slow swell */
+.auth-water {
+  position: relative; z-index: 1; flex-shrink: 0;
+  margin: auto -56px -36px;
+  height: clamp(190px, 36vh, 400px);
+  overflow: hidden;
+  animation: auth-fill 1.8s cubic-bezier(.2, .7, .2, 1) both;
+}
+.auth-body { position: absolute; inset: 46px 0 0; background: linear-gradient(var(--water), var(--deep)); }
+.wave { position: absolute; left: 0; width: 200%; height: 48px; top: 0; z-index: 1; }
+.wave.back { fill: var(--crest); opacity: .55; top: 0; animation: auth-swell 13s linear infinite reverse; }
+.wave.front { fill: var(--water); top: 10px; animation: auth-swell 9s linear infinite; }
+
+.auth-note {
+  position: absolute; left: 56px; bottom: 28px; right: 140px; z-index: 2; margin: 0;
+  font-size: 13px; color: rgba(255, 255, 255, .88); max-width: 30em;
+}
+
+@keyframes auth-fill { from { height: 0; } }
+@keyframes auth-swell { to { transform: translateX(-50%); } }
+
+/* ---------- right: the form ---------- */
+.auth-panel {
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 24px;
+  background: var(--page);
+}
+.auth-form { width: 100%; max-width: 380px; }
+.auth-tabs {
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--surface-2, rgba(11, 44, 64, .06));
+  border-radius: 10px; padding: 4px; margin-bottom: 28px;
+}
+.auth-tabs a {
+  text-align: center; padding: 8px 0; border-radius: 7px;
+  color: var(--ink2); text-decoration: none; font-weight: 550; font-size: 14px;
+}
+.auth-tabs a[aria-current="page"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(11, 44, 64, .12); }
+.auth-tabs a:focus-visible { outline: 2px solid #1a86c4; outline-offset: 1px; }
+
+.auth-form h2 {
+  font-family: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  font-size: 28px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 6px;
+}
+.auth-form .lead { color: var(--ink2); margin: 0 0 22px; }
+.auth-form .btn-primary { background: #0f6fa6; padding: 11px 14px; }
+.auth-form .btn-primary:hover { background: #0b5e8d; filter: none; }
+.auth-form input { padding: 10px 12px; background: var(--surface); }
+.auth-form input:focus { outline-color: #1a86c4; }
+.auth-form .btn-ghost { padding: 10px 14px; background: var(--surface); }
+.auth-form .divider { margin: 18px 0; }
+.auth-form .switch { margin-top: 18px; text-align: center; color: var(--muted); font-size: 13.5px; }
+.auth-form .switch a { color: #0f6fa6; }
+
+.pw { position: relative; }
+.pw input { width: 100%; padding-right: 72px; }
+.pw button {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  border: 0; background: transparent; color: var(--ink2); font: inherit; font-size: 12.5px;
+  padding: 4px 8px; border-radius: 6px; cursor: pointer;
+}
+.pw button:hover { background: var(--hover); }
+.hint { font-size: 12px; color: var(--muted); }
+
+/* ---------- dark ---------- */
+:root[data-theme="dark"] {
+  .auth { --foam: #0d1d26; --navy: #e4f1f7; --deep: #05263a; --water: #136a9c; --crest: #2c8fbf; }
+  .auth-pitch p, .auth-pitch li { color: #a9c6d4; }
+  .auth-scale:not(.under) .mark { border-color: rgba(228, 241, 247, .25); }
+  .auth-scale:not(.under) .mark span { color: rgba(228, 241, 247, .5); }
+  .auth-form .switch a { color: #6cc0ea; }
+  .auth-tabs { background: rgba(255, 255, 255, .06); }
+  .auth-tabs a[aria-current="page"] { background: rgba(255, 255, 255, .14); box-shadow: none; }
+  .auth-form .btn-primary { background: #1a86c4; }
+}
+
+/* ---------- narrow screens: jug becomes a band on top ---------- */
+@media (max-width: 900px) {
+  .auth { grid-template-columns: 1fr; }
+  .auth-jug { padding: 24px 22px; }
+  .auth-pitch { margin: 22px 0 24px; }
+  .auth-pitch h1 { font-size: 30px; }
+  .auth-pitch ul, .auth-scale, .auth-note { display: none; }
+  .auth-water { height: 72px; margin: 0 -22px -24px; }
+  .auth-panel { align-items: flex-start; padding-top: 28px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-water, .wave { animation: none; }
+}

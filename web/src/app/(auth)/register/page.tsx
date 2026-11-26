@@ -1,16 +1,19 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { getSession } from "@/lib/auth";
-import { enabledSocialProviders } from "@/lib/auth-options.mjs";
+import { socialProviderStatus } from "@/lib/auth-options.mjs";
 import AuthForm from "../AuthForm";
+import AuthShell from "../AuthShell";
 
 export const dynamic = "force-dynamic";
 
 export default async function RegisterPage() {
-  if (await getSession()) redirect("/raport");
+  if (await getSession()) redirect("/pulpit");
   return (
-    <Suspense>
-      <AuthForm mode="register" providers={enabledSocialProviders()} />
-    </Suspense>
+    <AuthShell>
+      <Suspense>
+        <AuthForm mode="register" providers={socialProviderStatus()} />
+      </Suspense>
+    </AuthShell>
   );
 }

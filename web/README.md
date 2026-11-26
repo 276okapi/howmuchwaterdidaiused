@@ -12,8 +12,13 @@ służy do podglądu własnego raportu bez serwera.
 | Adres | Opis |
 |---|---|
 | `/register`, `/login` | Rejestracja i logowanie: e-mail + hasło, Google, GitHub (przyciski OAuth pokazują się po ustawieniu kluczy w `.env`) |
-| `/raport` | Raport zalogowanego użytkownika (szablon z `report-template.html`) |
-| `/konto` | Klucze API (tworzenie, lista, usuwanie) i wylogowanie |
+| `/pulpit`, `/dni`, `/prompty` | Raport zalogowanego użytkownika, trzy widoki (szablon z `report-template.html` w ramce `/raport/widok`) |
+| `/klucze` | Klucze API: tworzenie, lista, usuwanie |
+| `/konto` | Dane konta i sposoby logowania |
+
+Po zalogowaniu każda strona ma wysuwane z lewej menu: Pulpit, Raporty (Dni, Prompty), Klucze API, Konto,
+a na dole „Wyloguj” i przełącznik motywu (auto / jasny / ciemny, zapamiętany w przeglądarce).
+Nową funkcję dodaje się jako stronę owiniętą w `AppShell` i pozycję w `ITEMS` w `src/components/SideMenu.tsx`.
 | `POST /api/ingest` | Odbiór metryk z komputera użytkownika; nagłówek `x-api-key: cw_...` albo `Authorization: Bearer cw_...` |
 | `/api/auth/*` | Endpointy Better Auth |
 
@@ -144,10 +149,13 @@ web/
     │   ├── auth.ts            # instancja Better Auth + getSession()
     │   ├── db.mjs             # pula połączeń MySQL
     │   └── turns.ts           # walidacja i zapis metryk
+    ├── components/            # AppShell + SideMenu (menu po zalogowaniu)
     └── app/
         ├── (auth)/login, register
-        ├── konto/             # klucze API, wylogowanie
-        ├── raport/route.ts    # raport HTML z danymi użytkownika
+        ├── (raport)/          # /pulpit, /dni, /prompty: wspólna ramka z raportem
+        ├── raport/widok/      # HTML raportu z danymi użytkownika (zawartość ramki)
+        ├── klucze/            # klucze API
+        ├── konto/             # dane konta
         └── api/ingest, api/auth
 ```
 
