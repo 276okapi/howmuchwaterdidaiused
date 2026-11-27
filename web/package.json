@@ -7,10 +7,10 @@
     "node": ">=20.12"
   },
   "scripts": {
-    "copy-template": "node scripts/copy-template.mjs",
-    "predev": "node scripts/copy-template.mjs",
+    "copy-shared": "node scripts/copy-shared.mjs",
+    "predev": "node scripts/copy-shared.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-template.mjs",
+    "prebuild": "node scripts/copy-shared.mjs",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "migrate": "node scripts/migrate.mjs",

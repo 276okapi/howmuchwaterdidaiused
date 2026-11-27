@@ -31,6 +31,7 @@
   powershell -NoProfile -ExecutionPolicy Bypass -File .\build-report.ps1
   powershell -NoProfile -ExecutionPolicy Bypass -File .\build-report.ps1 -Full
   powershell -NoProfile -ExecutionPolicy Bypass -File .\build-report.ps1 -NoPriceUpdate
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\build-report.ps1 -JsonOut dane.json   # only data, no report
 #>
 param(
     [string]$ProjectsDir = (Join-Path $env:USERPROFILE '.claude\projects'),
@@ -43,7 +44,10 @@ param(
     [switch]$Full,
     # Do not download the price list (use the prices already saved in ceny.json).
     [switch]$NoPriceUpdate,
-    [string]$PriceUrl = 'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json'
+    [string]$PriceUrl = 'https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json',
+    # Write only the data as JSON ({"meta": ..., "turns": [...]}) to this file, without raport.html and prompty.csv.
+    # Used by the AI Water Tracker agent (sync.ps1), which only sends data and keeps no report on the computer.
+    [string]$JsonOut
 )
 
 $ErrorActionPreference = 'Stop'
@@ -495,7 +499,7 @@ $turns = New-Object System.Collections.Generic.List[object]
 $rxWord = [regex]::new('\S+')
 # prompt-text analysis: what you typed yourself, without pastes, code, links and file paths
 $rxNoise = [regex]::new('(?s)<pasted_content\b[^>]*>.*?(</pasted_content\b[^>]*>|$)|```.*?(```|$)|`[^`]*`|https?://\S+|\S*[\\/]\S*|<[^>]+>')
-$rxTok = [regex]::new("\p{L}+(?:['’\-]\p{L}+)*")
+$rxTok = [regex]::new("\p{L}+(?:['\u2019\-]\p{L}+)*")   # \u2019 = typographic apostrophe (file stays ASCII-only)
 $MaxWords = 300
 
 function Get-PromptWords([string]$text) {
@@ -705,6 +709,12 @@ $meta['water'] = $wm
 if ($unknownModels.Count) { $meta['unknownModels'] = [string](@($unknownModels) -join ', ') }
 $dataJson = $json.Serialize($sorted).Replace('</', '<\/')
 $metaJson = $json.Serialize($meta)
+if ($JsonOut) {
+    [IO.File]::WriteAllText($JsonOut, '{"meta":' + $metaJson + ',"turns":' + $dataJson + '}', $utf8)
+    Write-Host ("Sesji: {0}, promptow: {1}, czas: {2:N1} s; dane: {3}" -f $sessions.Count, $sorted.Count, $sw.Elapsed.TotalSeconds, $JsonOut)
+    if ($unknownModels.Count) { Write-Warning "Brak ceny dla modeli: $(@($unknownModels) -join ', ')" }
+    return
+}
 
 $template = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'report-template.html'), [Text.Encoding]::UTF8)
 $html = $template.Replace('/*__DATA__*/[]', $dataJson).Replace('/*__META__*/{}', $metaJson)

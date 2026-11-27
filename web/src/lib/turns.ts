@@ -1,12 +1,14 @@
 // Prompt metrics ("turns") sent by the local agent, stored per user.
-// Privacy by design: the prompt text (x, tw) is never accepted or stored, only numbers
-// and labels. See WHATNEXT.md, section 3.
+// Privacy: the agent removes the prompt text (x, tw) and project names (p) on the user's
+// computer unless the user agreed to share them at install time. Shared text is shown
+// only in that user's own report.
 import type { RowDataPacket } from "mysql2/promise";
 import { getPool } from "./db.mjs";
 
 const NUM = ["c", "w", "img", "o", "t", "r", "a", "in", "cr", "cw", "h2o", "usd", "usds", "k"] as const;
 const BOOL = ["i", "nx", "q", "pst"] as const;
-const STR: Record<string, number> = { p: 120, m: 400, kr: 120 };
+// strings and their maximum length; x = prompt excerpt, tw = its own words (only if shared)
+const STR: Record<string, number> = { p: 120, m: 400, kr: 120, x: 1000, tw: 4000 };
 
 export type Turn = Record<string, unknown> & { s: string; e: string; sid: string };
 

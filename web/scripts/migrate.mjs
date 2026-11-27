@@ -22,7 +22,8 @@ const { getPool } = await import("../src/lib/db.mjs");
 const dryRun = process.argv.includes("--sql");
 const pool = getPool();
 const appSql = readFileSync(path.join(root, "db", "schema.sql"), "utf8")
-  .split(/;\s*$/m)
+  // statements end with ";" at the end of a line (a "-- comment" may follow it)
+  .split(/;[ \t]*(?:--[^\n]*)?$/m)
   .map(s => s.trim())
   .filter(s => s && !/^(--[^\n]*\n?)+$/.test(s));
 

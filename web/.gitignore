@@ -6,6 +6,7 @@ next-env.d.ts
 .env
 .env.local
 .env.*.local
-# copied from ../report-template.html by scripts/copy-template.mjs
+# copied from the repository root by scripts/copy-shared.mjs
 templates/
+agent-dist/
 deploy/

@@ -35,8 +35,8 @@ export async function GET() {
   const turns = await getTurns(session.user.id);
 
   const last = await getLastIngest(session.user.id);
-  // prompt text never reaches the server; the template expects strings
-  const data = turns.map(t => ({ ...t, x: "", tw: "" }));
+  // prompt text is there only if the user shared it; the template expects strings
+  const data = turns.map(t => ({ ...t, x: typeof t.x === "string" ? t.x : "", tw: typeof t.tw === "string" ? t.tw : "" }));
   const meta = {
     generated: (last ?? new Date()).toISOString(),
     sessions: new Set(turns.map(t => t.sid)).size,

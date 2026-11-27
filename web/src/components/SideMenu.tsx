@@ -40,9 +40,9 @@ const GROUPS: { title?: string; items: Item[] }[] = [
   {
     items: [
       {
-        href: "/klucze",
-        label: "Klucze API",
-        icon: <svg {...ICON}><circle cx="8" cy="15" r="4" /><path d="m11 12 9-9M17 6l3 3M14 9l2 2" /></svg>,
+        href: "/agent",
+        label: "Agent",
+        icon: <svg {...ICON}><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M8 20h8M12 16v4M12 7v5M9.5 9.5 12 12l2.5-2.5" /></svg>,
       },
       {
         href: "/konto",

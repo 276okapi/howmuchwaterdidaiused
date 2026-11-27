@@ -1,6 +1,7 @@
 // POST /api/ingest - the local agent sends prompt metrics here.
 // Auth: personal API key in the "x-api-key" header (or "Authorization: Bearer <key>").
-// Body: { "turns": [ { s, e, sid, m, o, in, cr, cw, h2o, usd, ... } ] }
+// Body: { "turns": [ { s, e, sid, m, o, in, cr, cw, h2o, usd, ... } ], "agent": { version, os, source } }
+// x / tw (prompt text) and real project names arrive only if the user agreed in the installer.
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { MAX_TURNS_PER_REQUEST, sanitizeTurn, upsertTurns, type Turn } from "@/lib/turns";

@@ -20,10 +20,9 @@ export default async function ReportLayout({ children }: { children: React.React
         <div className="empty-state">
           <h1>Nie ma jeszcze danych</h1>
           <p>
-            Raport pojawi się, gdy wyślesz statystyki z komputera, na którym pracujesz z asystentem AI.
-            Do wysyłania potrzebny jest klucz API.
+            Raport pojawi się, gdy agent wyśle statystyki z komputera, na którym pracujesz z asystentem AI.
           </p>
-          <p><Link className="btn btn-primary" href="/klucze">Utwórz klucz API</Link></p>
+          <p><Link className="btn btn-primary" href="/agent">Zainstaluj agenta</Link></p>
         </div>
       )}
       {children}
