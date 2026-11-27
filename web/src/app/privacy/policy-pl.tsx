@@ -1,14 +1,6 @@
-import type { Metadata } from "next";
+// Polish privacy policy. Fields to fill in before going public are marked with <Fill>.
 import Link from "next/link";
-import PublicShell from "@/components/PublicShell";
-
-export const metadata: Metadata = { title: "Polityka prywatności · howmuchwaterdidaiused" };
-export const dynamic = "force-dynamic";
-
-// Fields to fill in before going public are marked with <Fill>; they show highlighted on the page.
-function Fill({ children }: { children: React.ReactNode }) {
-  return <span className="todo-fill">{children}</span>;
-}
+import { Fill } from "./fill";
 
 const SECTIONS = [
   ["admin", "Kto odpowiada za Twoje dane"],
@@ -23,9 +15,8 @@ const SECTIONS = [
   ["zmiany", "Zmiany polityki"],
 ];
 
-export default function PrivacyPage() {
+export default function PolicyPl() {
   return (
-    <PublicShell>
       <article className="policy">
         <h1>Polityka prywatności</h1>
         <p className="updated">Ostatnia aktualizacja: <Fill>[data publikacji]</Fill></p>
@@ -114,7 +105,7 @@ export default function PrivacyPage() {
 
         <h2 id="cookies">5. Pliki cookie i pamięć przeglądarki</h2>
         <ul>
-          <li>używamy jednego niezbędnego pliku cookie z identyfikatorem sesji, żeby utrzymać Cię zalogowanego,</li>
+          <li>używamy niezbędnego pliku cookie z identyfikatorem sesji, żeby utrzymać Cię zalogowanego, oraz jednego, który pamięta wybrany język,</li>
           <li>wybrany motyw (jasny, ciemny, jak w systemie) zapisujemy w pamięci Twojej przeglądarki,</li>
           <li>nie używamy plików cookie reklamowych ani narzędzi analitycznych firm trzecich.</li>
         </ul>
@@ -163,9 +154,8 @@ export default function PrivacyPage() {
         </p>
 
         <p style={{ marginTop: 32 }}>
-          <Link href="/o-serwisie">Co znajdziesz po zalogowaniu</Link>
+          <Link href="/about">Co znajdziesz po zalogowaniu</Link>
         </p>
       </article>
-    </PublicShell>
   );
 }

@@ -68,6 +68,7 @@
 .app-items svg, .app-signout svg { flex-shrink: 0; }
 
 .app-bottom { margin-top: auto; }
+.app-legal-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-right: 4px; }
 .app-legal { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; font-size: 13px; }
 .app-legal a { color: var(--muted); text-decoration: none; padding: 3px 0; }
 .app-legal a:hover { color: var(--ink); text-decoration: underline; }

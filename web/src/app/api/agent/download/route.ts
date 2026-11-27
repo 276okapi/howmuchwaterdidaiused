@@ -1,6 +1,6 @@
 // GET /api/agent/download?os=windows
 // The installer howmuchwaterdidaiused-setup.exe with the site address and the user's agent key
-// appended at the end (after CONFIG_MARKER), so it needs no typing. `&klucz=0`: without them.
+// appended at the end (after CONFIG_MARKER), so it needs no typing. `&key=0`: without them.
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getAgentKey } from "@/lib/agent-key";
@@ -25,7 +25,7 @@ export async function GET(req: Request) {
   }
 
   let body = exe;
-  if (url.searchParams.get("klucz") !== "0") {
+  if (url.searchParams.get("key") !== "0") {
     const { key } = await getAgentKey(session.user.id);
     const config = JSON.stringify({ server: publicUrl(req), apiKey: key });
     body = Buffer.concat([exe, Buffer.from(`\r\n${CONFIG_MARKER}${config}`, "utf8")]);

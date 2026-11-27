@@ -1,5 +1,6 @@
-// GET /raport/widok - the same interactive report as the local version (report-template.html),
-// filled with the signed-in user's data. Shown in a frame on /pulpit, /dni and /prompty.
+// GET /report/view - the same interactive report as the local version (report-template.html),
+// filled with the signed-in user's data. Shown in a frame on /dashboard, /days and /prompts.
+import { getLang } from "@/lib/lang";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
@@ -60,7 +61,8 @@ const scriptJson = (v: unknown) => JSON.stringify(v).replace(/</g, "\\u003c");
 
 export async function GET() {
   const session = await getSession();
-  if (!session) return new NextResponse("Sesja wygasła. Zaloguj się ponownie.", { status: 401 });
+  const lang = await getLang();
+  if (!session) return new NextResponse(lang === "en" ? "Your session has expired. Sign in again." : "Sesja wygasła. Zaloguj się ponownie.", { status: 401 });
 
   const turns = await getTurns(session.user.id);
 
@@ -75,6 +77,7 @@ export async function GET() {
     corrWindow: 30,
     water: WATER,
     online: true,
+    lang,
   };
 
   const html = (await template())

@@ -171,13 +171,13 @@ footer { color: var(--muted); font-size: 12px; }
 <body>
 <main>
   <div class="topbar">
-    <h1>Statystyki promptów Claude Code</h1>
+    <h1 data-en="Claude Code prompt stats">Statystyki promptów Claude Code</h1>
     <div class="topctl">
       <div class="seg tabs" id="tabs" role="tablist">
-        <button data-v="dash" role="tab">Pulpit</button><button data-v="day" role="tab">Dni</button><button data-v="prompts" role="tab">Prompty</button>
+        <button data-v="dash" role="tab" data-en="Dashboard">Pulpit</button><button data-v="day" role="tab" data-en="Days">Dni</button><button data-v="prompts" role="tab" data-en="Prompts">Prompty</button>
       </div>
-      <div class="seg theme" id="theme" title="Motyw">
-        <button data-t="auto" title="Jak w systemie">Auto</button><button data-t="light">Jasny</button><button data-t="dark">Ciemny</button>
+      <div class="seg theme" id="theme" title="Motyw" data-en-title="Theme">
+        <button data-t="auto" title="Jak w systemie" data-en-title="Follow system">Auto</button><button data-t="light" data-en="Light">Jasny</button><button data-t="dark" data-en="Dark">Ciemny</button>
       </div>
     </div>
   </div>
@@ -191,14 +191,14 @@ footer { color: var(--muted); font-size: 12px; }
 
     <div class="dash-row">
       <section class="card water-card">
-        <h2>Woda zużyta przez Twoje prompty</h2>
+        <h2 data-en="Water used by your prompts">Woda zużyta przez Twoje prompty</h2>
         <div class="water-big" id="waterBig">
           <svg class="pool" viewBox="0 0 96 54" aria-hidden="true">
             <rect x="1" y="6" width="94" height="46" rx="4" fill="var(--glass)" stroke="var(--axis)" stroke-width="2"/>
             <rect id="poolFill" x="3" y="50" width="90" height="0" rx="2" fill="var(--water)"/>
             <g stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 3"><line x1="3" x2="93" y1="17" y2="17"/><line x1="3" x2="93" y1="29" y2="29"/><line x1="3" x2="93" y1="41" y2="41"/></g>
           </svg>
-          <div><div class="v" id="waterTotal"></div><div class="l">łącznie, szacunek · najedź, by porównać z basenem</div></div>
+          <div><div class="v" id="waterTotal"></div><div class="l" data-en="total, estimated · hover to compare with a pool">łącznie, szacunek · najedź, by porównać z basenem</div></div>
         </div>
         <ul class="water-facts" id="waterFacts"></ul>
         <p class="note" id="waterNote"></p>
@@ -206,27 +206,27 @@ footer { color: var(--muted); font-size: 12px; }
 
       <section class="card">
         <div class="head">
-          <h2>Kalendarz aktywności</h2>
+          <h2 data-en="Activity calendar">Kalendarz aktywności</h2>
           <div class="legend" id="heatLegend"></div>
         </div>
         <div id="heat"></div>
-        <p class="note">Kliknij dzień, aby otworzyć jego szczegóły.</p>
+        <p class="note" data-en="Click a day to open its details.">Kliknij dzień, aby otworzyć jego szczegóły.</p>
       </section>
     </div>
 
     <section class="card">
       <div class="head">
-        <h2>Prompty dziennie</h2>
+        <h2 data-en="Prompts per day">Prompty dziennie</h2>
         <div class="seg" id="range">
-          <button data-r="14">14 dni</button><button data-r="30">30 dni</button><button data-r="90">90 dni</button><button data-r="all">Wszystko</button>
+          <button data-r="14" data-en="14 days">14 dni</button><button data-r="30" data-en="30 days">30 dni</button><button data-r="90" data-en="90 days">90 dni</button><button data-r="all" data-en="All">Wszystko</button>
         </div>
       </div>
       <div id="bars"></div>
-      <p class="note">Kliknij słupek, aby zobaczyć szczegóły dnia.</p>
+      <p class="note" data-en="Click a bar to see that day.">Kliknij słupek, aby zobaczyć szczegóły dnia.</p>
     </section>
 
     <section class="card">
-      <div class="head"><h2>Projekty</h2></div>
+      <div class="head"><h2 data-en="Projects">Projekty</h2></div>
       <div class="table-wrap"><table id="projTbl"></table></div>
     </section>
   </div>
@@ -234,15 +234,15 @@ footer { color: var(--muted); font-size: 12px; }
   <!-- ================= DAY VIEW ================= -->
   <div id="viewDay" hidden>
     <div class="day-layout">
-      <nav class="card daylist" id="dayList" aria-label="Dni z promptami"></nav>
+      <nav class="card daylist" id="dayList" aria-label="Dni z promptami" data-en-aria="Days with prompts"></nav>
       <div>
         <section class="card">
           <div class="head">
             <p class="day-title" id="dayTitle"></p>
             <div class="nav">
-              <button id="prev" title="Poprzedni dzień z promptami (←)">‹</button>
+              <button id="prev" title="Poprzedni dzień z promptami (←)" data-en-title="Previous day with prompts (←)">‹</button>
               <input type="date" id="dayPick">
-              <button id="next" title="Następny dzień z promptami (→)">›</button>
+              <button id="next" title="Następny dzień z promptami (→)" data-en-title="Next day with prompts (→)">›</button>
             </div>
           </div>
           <div class="day-grid">
@@ -252,19 +252,19 @@ footer { color: var(--muted); font-size: 12px; }
               <div class="tube" id="tube"><div class="fill" id="tubeFill"></div></div>
               <div class="water-text">
                 <div class="v" id="dayWater"></div>
-                <div class="l">woda (szacunek)</div>
+                <div class="l" data-en="water (estimated)">woda (szacunek)</div>
                 <div class="s" id="dayWaterSub"></div>
               </div>
             </div>
           </div>
           <p class="note" id="kpiNote" style="margin:0 0 16px"></p>
-          <h2>Oś czasu: od wysłania promptu do ostatniej odpowiedzi</h2>
+          <h2 data-en="Timeline: from sending a prompt to the last answer">Oś czasu: od wysłania promptu do ostatniej odpowiedzi</h2>
           <div id="timeline" style="margin-top:10px"></div>
           <p class="note" id="tlNote"></p>
         </section>
 
         <section class="card">
-          <div class="head"><h2>Prompty dnia</h2></div>
+          <div class="head"><h2 data-en="Prompts of the day">Prompty dnia</h2></div>
           <div class="table-wrap"><table id="tbl"></table></div>
         </section>
       </div>
@@ -277,10 +277,10 @@ footer { color: var(--muted); font-size: 12px; }
       <div class="head" style="margin-bottom:0">
         <div class="filters">
           <div class="seg" id="pRange">
-            <button data-r="7">7 dni</button><button data-r="30">30 dni</button><button data-r="90">90 dni</button><button data-r="all">Wszystko</button>
+            <button data-r="7" data-en="7 days">7 dni</button><button data-r="30" data-en="30 days">30 dni</button><button data-r="90" data-en="90 days">90 dni</button><button data-r="all" data-en="All">Wszystko</button>
           </div>
-          <select id="pProj" aria-label="Projekt"></select>
-          <label><input type="checkbox" id="pStop" checked> pomijaj słowa funkcyjne</label>
+          <select id="pProj" aria-label="Projekt" data-en-aria="Project"></select>
+          <label><input type="checkbox" id="pStop" checked> <span data-en="skip function words">pomijaj słowa funkcyjne</span></label>
         </div>
         <span class="note" style="margin:0" id="pCount"></span>
       </div>
@@ -289,36 +289,36 @@ footer { color: var(--muted); font-size: 12px; }
 
     <div class="pgrid">
       <section class="card">
-        <div class="head"><h2>Najczęstsze słowa</h2></div>
+        <div class="head"><h2 data-en="Most common words">Najczęstsze słowa</h2></div>
         <div class="blist" id="pWords"></div>
       </section>
       <section class="card">
         <div class="head">
-          <h2>Najczęstsze sformułowania</h2>
-          <div class="seg" id="pN"><button data-n="2">2 słowa</button><button data-n="3">3 słowa</button><button data-n="4">4 słowa</button></div>
+          <h2 data-en="Most common phrases">Najczęstsze sformułowania</h2>
+          <div class="seg" id="pN"><button data-n="2" data-en="2 words">2 słowa</button><button data-n="3" data-en="3 words">3 słowa</button><button data-n="4" data-en="4 words">4 słowa</button></div>
         </div>
         <div class="blist" id="pPhrases"></div>
       </section>
       <section class="card">
-        <div class="head"><h2>Jak zaczynasz prompty</h2></div>
+        <div class="head"><h2 data-en="How you start prompts">Jak zaczynasz prompty</h2></div>
         <div class="blist" id="pOpen"></div>
       </section>
       <section class="card">
-        <div class="head"><h2>Komendy</h2></div>
+        <div class="head"><h2 data-en="Commands">Komendy</h2></div>
         <div class="blist" id="pCmd"></div>
       </section>
       <section class="card">
-        <div class="head"><h2>Długość promptów (słowa)</h2></div>
+        <div class="head"><h2 data-en="Prompt length (words)">Długość promptów (słowa)</h2></div>
         <div id="pLen"></div>
       </section>
       <section class="card">
-        <div class="head"><h2>O której piszesz</h2></div>
+        <div class="head"><h2 data-en="When you write">O której piszesz</h2></div>
         <div id="pHour"></div>
       </section>
     </div>
 
     <section class="card" id="pMatchCard">
-      <div class="head"><h2 id="pMatchTitle">Prompty z wybranym sformułowaniem</h2></div>
+      <div class="head"><h2 id="pMatchTitle" data-en="Prompts with the chosen phrase">Prompty z wybranym sformułowaniem</h2></div>
       <ul class="match" id="pMatch"></ul>
     </section>
   </div>
@@ -332,12 +332,24 @@ footer { color: var(--muted); font-size: 12px; }
   const RAW = /*__DATA__*/[];
   const META = /*__META__*/{};
 
+  // language: META.lang "en" (set by the website) or Polish (default, also for the local report)
+  const LANG = META.lang === 'en' ? 'en' : 'pl';
+  const L = (pl, en) => LANG === 'en' ? en : pl;
+  const LOC = L('pl-PL', 'en-US');
+  if (LANG === 'en') {
+    document.documentElement.lang = 'en';
+    document.title = 'Prompt stats';
+    document.querySelectorAll('[data-en]').forEach(e => e.textContent = e.dataset.en);
+    document.querySelectorAll('[data-en-title]').forEach(e => e.title = e.dataset.enTitle);
+    document.querySelectorAll('[data-en-aria]').forEach(e => e.setAttribute('aria-label', e.dataset.enAria));
+  }
+
   const $ = s => document.querySelector(s);
   const pad = n => String(n).padStart(2, '0');
   const dayKey = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   const parseDay = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
-  const fmtTime = d => d.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const fmtNum = n => Math.round(n).toLocaleString('pl-PL');
+  const fmtTime = d => d.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const fmtNum = n => Math.round(n).toLocaleString(LOC);
   const fmtDur = s => {
     s = Math.round(s);
     if (s < 60) return s + ' s';
@@ -345,16 +357,17 @@ footer { color: var(--muted); font-size: 12px; }
     if (m < 60) return m + ' min ' + pad(s % 60) + ' s';
     return Math.floor(m / 60) + ' h ' + pad(m % 60) + ' min';
   };
-  const fmtDayLong = k => parseDay(k).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const fmtDayLong = k => parseDay(k).toLocaleDateString(LOC, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
   const fmtDayShort = k => { const d = parseDay(k); return d.getDate() + '.' + pad(d.getMonth() + 1); };
-  const fmtDayMed = k => parseDay(k).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' });
+  const fmtDayMed = k => parseDay(k).toLocaleDateString(LOC, { day: 'numeric', month: 'long', year: 'numeric' });
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const fmtUsd = n => (n > 0 && n < 0.005) ? '< 0,01 USD'
-    : n.toLocaleString('pl-PL', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const fmtPct = (a, b) => b ? (a / b).toLocaleString('pl-PL', { style: 'percent', maximumFractionDigits: 0 }) : '–';
-  // Polish plural: 1 butelka, 2 butelki, 5 butelek
-  const plural = (n, one, few, many) => {
+  const fmtUsd = n => (n > 0 && n < 0.005) ? L('< 0,01 USD', '< 0.01 USD')
+    : n.toLocaleString(LOC, { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtPct = (a, b) => b ? (a / b).toLocaleString(LOC, { style: 'percent', maximumFractionDigits: 0 }) : '–';
+  // Polish plural: 1 butelka, 2 butelki, 5 butelek; English: 1 bottle, 2 bottles
+  const plural = (n, one, few, many, enOne, enMany) => {
     n = Math.abs(Math.round(n));
+    if (LANG === 'en') return n === 1 ? enOne : enMany;
     if (n === 1) return one;
     const d = n % 10, h = n % 100;
     return d >= 2 && d <= 4 && (h < 12 || h > 14) ? few : many;
@@ -363,13 +376,13 @@ footer { color: var(--muted); font-size: 12px; }
   // k = 2: hard event (Esc, stopped at a tool, API error, no reply) - the main rate, over all prompts;
   // k = 1: soft signal in the next prompt (reguly.json) - shown separately, over prompts followed by another one
   const corrStats = ts => ({ n: ts.filter(t => t.k === 2).length, d: ts.length, soft: ts.filter(t => t.nx && t.k === 1).length, softD: ts.filter(t => t.nx).length });
-  const corrSub = cs => `${cs.n} z ${cs.d} · sygnały w treści: ${cs.soft}`;
+  const corrSub = cs => L(`${cs.n} z ${cs.d} · sygnały w treści: ${cs.soft}`, `${cs.n} of ${cs.d} · signals in text: ${cs.soft}`);
   const corrBreakdown = ts => {
     const c = {}; ts.filter(t => t.k === 2).forEach(t => c[t.kr] = (c[t.kr] || 0) + 1);
-    return Object.entries(c).map(([k, n]) => `${k}: ${n}`).join('\n') || 'brak';
+    return Object.entries(c).map(([k, n]) => `${k}: ${n}`).join('\n') || L('brak', 'none');
   };
   const CORR_MARK = ['', '○', '●'];
-  const corrLabel = t => t.k === 2 ? `przerwane lub awaria: ${t.kr || ''}` : t.k === 1 ? `sygnał w następnym prompcie: ${t.kr || ''}` : '';
+  const corrLabel = t => t.k === 2 ? `${L('przerwane lub awaria', 'interrupted or failed')}: ${t.kr || ''}` : t.k === 1 ? `${L('sygnał w następnym prompcie', 'signal in the next prompt')}: ${t.kr || ''}` : '';
   const median = a => { if (!a.length) return 0; const b = [...a].sort((x, y) => x - y), h = b.length >> 1; return b.length % 2 ? b[h] : (b[h - 1] + b[h]) / 2; };
   const sum = (a, f) => a.reduce((s, x) => s + f(x), 0);
 
@@ -377,15 +390,15 @@ footer { color: var(--muted); font-size: 12px; }
   const WF = Object.assign({ in: 20, cw: 20, cr: 2, out: 100, pool: 2500000 }, META.water || {});
   // reports built before the water estimate existed have no h2o: estimate from the main-thread tokens
   const waterOf = r => typeof r.h2o === 'number' ? r.h2o : ((r.in || 0) * WF.in + (r.cw || 0) * WF.cw + (r.cr || 0) * WF.cr + (r.o || 0) * WF.out) / 1e6;
-  const fmtL = l => l > 0 && l < 0.01 ? '< 0,01 l'
+  const fmtL = l => l > 0 && l < 0.01 ? L('< 0,01 l', '< 0.01 l')
     : l >= 100 ? fmtNum(l) + ' l'
-    : l.toLocaleString('pl-PL', { maximumFractionDigits: l >= 10 ? 1 : 2 }) + ' l';
-  const fmtSig = n => n.toLocaleString('pl-PL', { maximumSignificantDigits: 3 });
+    : l.toLocaleString(LOC, { maximumFractionDigits: l >= 10 ? 1 : 2 }) + ' l';
+  const fmtSig = n => n.toLocaleString(LOC, { maximumSignificantDigits: 3 });
   const poolsText = l => {
     const p = l / WF.pool;
-    return `${fmtSig(p)} basenu olimpijskiego (${(p * 100).toLocaleString('pl-PL', { maximumSignificantDigits: 3 })}%)`;
+    return `${fmtSig(p)} ${L('basenu olimpijskiego', 'of an Olympic pool')} (${(p * 100).toLocaleString(LOC, { maximumSignificantDigits: 3 })}%)`;
   };
-  const bottles = l => { const n = Math.round(l / 0.5); return `${fmtNum(n)} ${plural(n, 'butelka', 'butelki', 'butelek')} 0,5 l`; };
+  const bottles = l => { const n = Math.round(l / 0.5); return `${fmtNum(n)} ${plural(n, 'butelka', 'butelki', 'butelek', 'bottle', 'bottles')} ${L('0,5 l', '0.5 l')}`; };
 
   const GAP = META.idleGap || 15;
   const turns = RAW.map(r => {
@@ -402,11 +415,11 @@ footer { color: var(--muted); font-size: 12px; }
   const fmtModels = s => s ? s.split(', ').map(fmtModel).join(', ') : '–';
   const fmtEnd = t => t.day === dayKey(t.end)
     ? fmtTime(t.end)
-    : t.end.toLocaleDateString('pl-PL', { day: 'numeric', month: 'numeric' }) + ' ' + fmtTime(t.end);
+    : t.end.toLocaleDateString(LOC, { day: 'numeric', month: 'numeric' }) + ' ' + fmtTime(t.end);
   turns.forEach((t, i) => t.id = i);
 
   if (!turns.length) {
-    document.querySelector('main').innerHTML = '<h1>Statystyki promptów</h1><p class="empty">Nie znaleziono promptów w transkryptach.</p>';
+    document.querySelector('main').innerHTML = L('<h1>Statystyki promptów</h1><p class="empty">Nie znaleziono promptów w transkryptach.</p>', '<h1>Prompt stats</h1><p class="empty">No prompts found in the transcripts.</p>');
     return;
   }
 
@@ -446,10 +459,10 @@ footer { color: var(--muted); font-size: 12px; }
   const hideTip = () => tip.style.display = 'none';
   const dayTip = k => {
     const b = dayStat.get(k);
-    return `<b>${esc(fmtDayLong(k))}</b><br>Prompty: <b>${b ? b.n : 0}</b>` + (b ? `<br><span class="m">Aktywny czas agenta: ${fmtDur(b.sum)}`
-      + `<br>Szacowany koszt: ${fmtUsd(b.usd)}`
-      + `<br>Woda: ${fmtL(b.h2o)}`
-      + `<br>Przerwane / awarie: ${b.corr.n} z ${b.corr.d}${b.corr.soft ? `, sygnały w treści: ${b.corr.soft}` : ''}</span>` : '');
+    return `<b>${esc(fmtDayLong(k))}</b><br>${L('Prompty', 'Prompts')}: <b>${b ? b.n : 0}</b>` + (b ? `<br><span class="m">${L('Aktywny czas agenta', 'Active agent time')}: ${fmtDur(b.sum)}`
+      + `<br>${L('Szacowany koszt', 'Estimated cost')}: ${fmtUsd(b.usd)}`
+      + `<br>${L('Woda', 'Water')}: ${fmtL(b.h2o)}`
+      + `<br>${L('Przerwane / awarie', 'Interrupted / failed')}: ${b.corr.n} ${L('z', 'of')} ${b.corr.d}${b.corr.soft ? `, ${L('sygnały w treści', 'signals in text')}: ${b.corr.soft}` : ''}</span>` : '');
   };
 
   function niceStep(raw) {
@@ -512,20 +525,20 @@ footer { color: var(--muted); font-size: 12px; }
   function renderDashKpis() {
     const totDur = sum(allDurs, x => x);
     const k = [
-      ['Prompty', fmtNum(turns.length), `śr. ${(turns.length / days.length).toLocaleString('pl-PL', { maximumFractionDigits: 1 })} na dzień aktywny`],
-      ['Dni aktywne', fmtNum(days.length), `z ${fmtNum(spanDays)} dni kalendarzowych`],
-      ['Aktywny czas agenta (suma)', fmtDur(totDur), `śr. ${fmtDur(totDur / days.length)} na dzień`],
-      ['Szacowany koszt (ceny API)', fmtUsd(totUsd) + (turns.some(t => t.cu) ? '*' : ''), `śr. ${fmtUsd(totUsd / days.length)} na dzień`],
-      ['Przerwane / awarie', fmtPct(allCorr.n, allCorr.d), corrSub(allCorr), null, corrBreakdown(turns)],
-      ['Mediana czasu odpowiedzi', fmtDur(median(allDurs)), `najdłuższa: ${fmtDur(Math.max(0, ...allDurs))}`],
-      ['Tokeny wyjściowe', fmtNum(sum(turns, t => t.o)), `śr. ${fmtNum(sum(turns, t => t.o) / turns.length)} na prompt`],
-      ['Najaktywniejszy dzień', fmtNum(dayStat.get(busiest).n) + ' prom.', fmtDayMed(busiest) + ' →', busiest],
+      [L('Prompty', 'Prompts'), fmtNum(turns.length), L(`śr. ${(turns.length / days.length).toLocaleString(LOC, { maximumFractionDigits: 1 })} na dzień aktywny`, `avg. ${(turns.length / days.length).toLocaleString(LOC, { maximumFractionDigits: 1 })} per active day`)],
+      [L('Dni aktywne', 'Active days'), fmtNum(days.length), L(`z ${fmtNum(spanDays)} dni kalendarzowych`, `of ${fmtNum(spanDays)} calendar days`)],
+      [L('Aktywny czas agenta (suma)', 'Active agent time (total)'), fmtDur(totDur), L(`śr. ${fmtDur(totDur / days.length)} na dzień`, `avg. ${fmtDur(totDur / days.length)} per day`)],
+      [L('Szacowany koszt (ceny API)', 'Estimated cost (API prices)'), fmtUsd(totUsd) + (turns.some(t => t.cu) ? '*' : ''), L(`śr. ${fmtUsd(totUsd / days.length)} na dzień`, `avg. ${fmtUsd(totUsd / days.length)} per day`)],
+      [L('Przerwane / awarie', 'Interrupted / failed'), fmtPct(allCorr.n, allCorr.d), corrSub(allCorr), null, corrBreakdown(turns)],
+      [L('Mediana czasu odpowiedzi', 'Median response time'), fmtDur(median(allDurs)), `${L('najdłuższa', 'longest')}: ${fmtDur(Math.max(0, ...allDurs))}`],
+      [L('Tokeny wyjściowe', 'Output tokens'), fmtNum(sum(turns, t => t.o)), L(`śr. ${fmtNum(sum(turns, t => t.o) / turns.length)} na prompt`, `avg. ${fmtNum(sum(turns, t => t.o) / turns.length)} per prompt`)],
+      [L('Najaktywniejszy dzień', 'Busiest day'), fmtNum(dayStat.get(busiest).n) + L(' prom.', ' prompts'), fmtDayMed(busiest) + ' →', busiest],
     ];
     $('#dashKpis').innerHTML = k.map(kpiHtml).join('');
   }
   // [label, value, sub, day to open on click, hover title]
   function kpiHtml([l, v, s, link, title]) {
-    const t = link ? 'Otwórz ten dzień' : title;
+    const t = link ? L('Otwórz ten dzień', 'Open this day') : title;
     return `<div class="kpi${link ? ' link' : ''}"${link ? ` data-day="${link}"` : ''}${t ? ` title="${esc(t)}"` : ''}>`
       + `<div class="v">${v}</div><div class="l">${l}</div>${s ? `<div class="s">${s}</div>` : ''}</div>`;
   }
@@ -541,19 +554,20 @@ footer { color: var(--muted); font-size: 12px; }
     const years = perDay > 0 ? WF.pool / perDay / 365 : Infinity;
     $('#waterFacts').innerHTML = [
       `≈ <b>${bottles(totH2O)}</b>`,
-      `Średnio <b>${fmtL(totH2O / days.length)}</b> na dzień aktywny, <b>${fmtL(totH2O / turns.length)}</b> na prompt`,
-      `Rekord: <b>${fmtL(maxDayH2O)}</b> (${fmtDayMed(recordWaterDay)})`,
+      L(`Średnio <b>${fmtL(totH2O / days.length)}</b> na dzień aktywny, <b>${fmtL(totH2O / turns.length)}</b> na prompt`, `On average <b>${fmtL(totH2O / days.length)}</b> per active day, <b>${fmtL(totH2O / turns.length)}</b> per prompt`),
+      `${L('Rekord', 'Record')}: <b>${fmtL(maxDayH2O)}</b> (${fmtDayMed(recordWaterDay)})`,
     ].map(x => `<li>${x}</li>`).join('');
-    const yearsTxt = isFinite(years) ? `${fmtNum(years)} ${plural(years, 'rok', 'lata', 'lat')}` : '–';
-    const tipHtml = `<b>${fmtL(totH2O)}</b> to<br><b>${poolsText(totH2O)}</b>`
-      + `<br><span class="m">Basen olimpijski: 50 × 25 × 2 m = ${fmtNum(WF.pool / 1000)} m³ (${fmtNum(WF.pool)} l).`
-      + `<br>W obecnym tempie (${fmtL(perDay)} dziennie) cały basen napełnisz za ok. ${yearsTxt}.</span>`;
+    const yearsTxt = isFinite(years) ? `${fmtNum(years)} ${plural(years, 'rok', 'lata', 'lat', 'year', 'years')}` : '–';
+    const tipHtml = `<b>${fmtL(totH2O)}</b> ${L('to', 'is')}<br><b>${poolsText(totH2O)}</b>`
+      + `<br><span class="m">${L('Basen olimpijski', 'Olympic pool')}: 50 × 25 × 2 m = ${fmtNum(WF.pool / 1000)} m³ (${fmtNum(WF.pool)} l).`
+      + L(`<br>W obecnym tempie (${fmtL(perDay)} dziennie) cały basen napełnisz za ok. ${yearsTxt}.</span>`, `<br>At the current pace (${fmtL(perDay)} a day) you fill the whole pool in about ${yearsTxt}.</span>`);
     const big = $('#waterBig');
     big.onmousemove = e => showTip(tipHtml, e);
     big.onmouseleave = hideTip;
     big.title = '';
-    big.setAttribute('aria-label', `${fmtL(totH2O)}, czyli ${poolsText(totH2O)}`);
-    $('#waterNote').textContent = `Szacunek z tokenów: ${WF.out} l na mln tokenów wyjścia, ${WF.in} l wejścia, ${WF.cw} l zapisu cache, ${WF.cr} l odczytu cache (z subagentami). Przelicznik w woda.json; publiczne szacunki różnią się nawet dziesięciokrotnie.`;
+    big.setAttribute('aria-label', `${fmtL(totH2O)}, ${L('czyli', 'that is')} ${poolsText(totH2O)}`);
+    $('#waterNote').textContent = L(`Szacunek z tokenów: ${WF.out} l na mln tokenów wyjścia, ${WF.in} l wejścia, ${WF.cw} l zapisu cache, ${WF.cr} l odczytu cache (z subagentami). Przelicznik w woda.json; publiczne szacunki różnią się nawet dziesięciokrotnie.`,
+      `Estimated from tokens: ${WF.out} l per million output tokens, ${WF.in} l input, ${WF.cw} l cache write, ${WF.cr} l cache read (with subagents). Rates in woda.json; public estimates differ by up to ten times.`);
   }
 
   // ---------- dashboard: calendar heatmap ----------
@@ -576,8 +590,8 @@ footer { color: var(--muted); font-size: 12px; }
     const levels = [0.25, 0.45, 0.7, 1];
     const lvl = n => n ? levels[Math.min(3, Math.floor(n / maxDayN * 4 - 1e-9))] : 0;
     heatCells = [];
-    let s = `<svg viewBox="0 0 ${Wt} ${H}" style="width:${Wt}px;max-width:100%" height="${H}" role="img" aria-label="Kalendarz liczby promptów">`;
-    ['Pn', '', 'Śr', '', 'Pt', '', ''].forEach((l, i) => { if (l) s += `<text x="0" y="${top + i * (cell + gap) + cell - 2}">${l}</text>`; });
+    let s = `<svg viewBox="0 0 ${Wt} ${H}" style="width:${Wt}px;max-width:100%" height="${H}" role="img" aria-label="${L('Kalendarz liczby promptów', 'Calendar of prompt counts')}">`;
+    L(['Pn', '', 'Śr', '', 'Pt', '', ''], ['Mon', '', 'Wed', '', 'Fri', '', '']).forEach((l, i) => { if (l) s += `<text x="0" y="${top + i * (cell + gap) + cell - 2}">${l}</text>`; });
     let lastMonth = -1;
     for (let w = 0; w < weeks; w++) {
       for (let d = 0; d < 7; d++) {
@@ -586,7 +600,7 @@ footer { color: var(--muted); font-size: 12px; }
         if (d === 0 || dt.getDate() === 1) {
           if (dt.getMonth() !== lastMonth && (dt.getDate() <= 7 || w === 0)) {
             lastMonth = dt.getMonth();
-            s += `<text x="${lw + w * (cell + gap)}" y="10">${dt.toLocaleDateString('pl-PL', { month: 'short' })}</text>`;
+            s += `<text x="${lw + w * (cell + gap)}" y="10">${dt.toLocaleDateString(LOC, { month: 'short' })}</text>`;
           }
         }
         const k = dayKey(dt), st = dayStat.get(k), n = st ? st.n : 0;
@@ -599,8 +613,8 @@ footer { color: var(--muted); font-size: 12px; }
       }
     }
     host.innerHTML = s + '</svg>';
-    $('#heatLegend').innerHTML = 'mniej <i style="background:var(--grid)"></i>'
-      + levels.map(o => `<i style="background:var(--accent);opacity:${o}"></i>`).join('') + ' więcej';
+    $('#heatLegend').innerHTML = L('mniej', 'less') + ' <i style="background:var(--grid)"></i>'
+      + levels.map(o => `<i style="background:var(--accent);opacity:${o}"></i>`).join('') + ' ' + L('więcej', 'more');
   }
   $('#heat').addEventListener('mousemove', e => {
     const i = e.target.dataset && e.target.dataset.i; if (i === undefined) return hideTip();
@@ -638,7 +652,7 @@ footer { color: var(--muted); font-size: 12px; }
     const colW = iw / barList.length;
     const bw = Math.max(1, Math.min(28, colW - 2));
 
-    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Liczba promptów dziennie">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="${L('Liczba promptów dziennie', 'Prompts per day')}">`;
     for (let v = 0; v <= yMax; v += step) {
       s += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="${v === 0 ? 'var(--axis)' : 'var(--grid)'}" stroke-width="1"/>`;
       s += `<text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
@@ -680,8 +694,10 @@ footer { color: var(--muted); font-size: 12px; }
       const ts = turns.filter(t => t.p === p), cs = corrStats(ts);
       return { p, n: ts.length, d: new Set(ts.map(t => t.day)).size, dur: sum(ts, t => t.dur), usd: sum(ts, t => t.usd), h2o: sum(ts, t => t.h2o), cs };
     });
-    $('#projTbl').innerHTML = '<thead><tr><th>Projekt</th><th class="n">Prompty</th><th class="n">Dni</th><th class="n">Czas agenta</th>'
-      + '<th class="n">Koszt</th><th class="n">Woda</th><th class="n">Przerwane / awarie</th></tr></thead><tbody>'
+    $('#projTbl').innerHTML = L('<thead><tr><th>Projekt</th><th class="n">Prompty</th><th class="n">Dni</th><th class="n">Czas agenta</th>'
+      + '<th class="n">Koszt</th><th class="n">Woda</th><th class="n">Przerwane / awarie</th></tr></thead><tbody>',
+      '<thead><tr><th>Project</th><th class="n">Prompts</th><th class="n">Days</th><th class="n">Agent time</th>'
+      + '<th class="n">Cost</th><th class="n">Water</th><th class="n">Interrupted / failed</th></tr></thead><tbody>')
       + rows.map(r => `<tr><td class="pj"><span class="dot" style="background:${projColor(r.p)}"></span>${esc(r.p)}</td>`
         + `<td class="n">${fmtNum(r.n)}</td><td class="n">${r.d}</td><td class="n">${fmtDur(r.dur)}</td><td class="n">${fmtUsd(r.usd)}</td>`
         + `<td class="n">${fmtL(r.h2o)}</td><td class="n">${fmtPct(r.cs.n, r.cs.d)}</td></tr>`).join('')
@@ -696,10 +712,10 @@ footer { color: var(--muted); font-size: 12px; }
   function buildDayList() {
     let h = '', month = '';
     [...days].reverse().forEach(k => {
-      const d = parseDay(k), mo = d.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+      const d = parseDay(k), mo = d.toLocaleDateString(LOC, { month: 'long', year: 'numeric' });
       if (mo !== month) { month = mo; h += `<h3>${esc(mo)}</h3>`; }
       const st = dayStat.get(k);
-      h += `<button data-day="${k}" title="${esc(fmtDayLong(k))}"><span class="dn">${d.toLocaleDateString('pl-PL', { weekday: 'short' })} ${fmtDayShort(k)}</span>`
+      h += `<button data-day="${k}" title="${esc(fmtDayLong(k))}"><span class="dn">${d.toLocaleDateString(LOC, { weekday: 'short' })} ${fmtDayShort(k)}</span>`
         + `<span class="dc">${st.n} · ${fmtL(st.h2o)}</span><span class="db"><i style="width:${(st.n / maxDayN * 100).toFixed(1)}%"></i></span></button>`;
     });
     $('#dayList').innerHTML = h;
@@ -723,14 +739,14 @@ footer { color: var(--muted); font-size: 12px; }
     const usd = sum(items, t => t.usd);
     const cs = corrStats(items);
     const k = [
-      ['Prompty', fmtNum(items.length)],
-      ['Aktywny czas agenta (suma)', fmtDur(sum(durs, x => x))],
-      ['Mediana czasu odpowiedzi', fmtDur(median(durs))],
-      ['Najdłuższa odpowiedź', fmtDur(Math.max(0, ...durs))],
-      ['Szacowany koszt (ceny API)', fmtUsd(usd) + (items.some(t => t.cu) ? '*' : ''), 'mediana ' + fmtUsd(median(items.map(t => t.usd))) + ' / prompt'],
-      ['Przerwane / awarie', fmtPct(cs.n, cs.d), corrSub(cs), null, corrBreakdown(items)],
-      ['Śr. długość promptu', fmtNum(sum(items, t => t.c) / Math.max(1, items.length)) + ' zn.'],
-      ['Tokeny wyjściowe', fmtNum(sum(items, t => t.o))],
+      [L('Prompty', 'Prompts'), fmtNum(items.length)],
+      [L('Aktywny czas agenta (suma)', 'Active agent time (total)'), fmtDur(sum(durs, x => x))],
+      [L('Mediana czasu odpowiedzi', 'Median response time'), fmtDur(median(durs))],
+      [L('Najdłuższa odpowiedź', 'Longest response'), fmtDur(Math.max(0, ...durs))],
+      [L('Szacowany koszt (ceny API)', 'Estimated cost (API prices)'), fmtUsd(usd) + (items.some(t => t.cu) ? '*' : ''), L('mediana ', 'median ') + fmtUsd(median(items.map(t => t.usd))) + ' / prompt'],
+      [L('Przerwane / awarie', 'Interrupted / failed'), fmtPct(cs.n, cs.d), corrSub(cs), null, corrBreakdown(items)],
+      [L('Śr. długość promptu', 'Avg. prompt length'), fmtNum(sum(items, t => t.c) / Math.max(1, items.length)) + L(' zn.', ' chars')],
+      [L('Tokeny wyjściowe', 'Output tokens'), fmtNum(sum(items, t => t.o))],
     ];
     $('#kpis').innerHTML = k.map(kpiHtml).join('');
     renderTube(sum(items, t => t.h2o));
@@ -752,16 +768,16 @@ footer { color: var(--muted); font-size: 12px; }
     // the CSS transition makes the water rise or fall when switching days
     $('#tubeFill').style.height = Math.min(100, l / tubeMax * 100).toFixed(2) + '%';
     $('#dayWater').textContent = fmtL(l);
-    $('#dayWaterSub').innerHTML = l ? `≈ ${bottles(l)}<br>${fmtNum(l / maxDayH2O * 100)}% rekordu` : 'brak promptów';
-    $('#waterPanel').setAttribute('aria-label', `Woda tego dnia: ${fmtL(l)}`);
-    $('#waterPanel').title = `${fmtL(l)} = ${poolsText(l)}\nSkala: rekordowy dzień ${fmtL(maxDayH2O)} (${fmtDayMed(recordWaterDay)})`;
+    $('#dayWaterSub').innerHTML = l ? `≈ ${bottles(l)}<br>${fmtNum(l / maxDayH2O * 100)}% ${L('rekordu', 'of the record')}` : L('brak promptów', 'no prompts');
+    $('#waterPanel').setAttribute('aria-label', `${L('Woda tego dnia', 'Water this day')}: ${fmtL(l)}`);
+    $('#waterPanel').title = `${fmtL(l)} = ${poolsText(l)}\n${L('Skala: rekordowy dzień', 'Scale: record day')} ${fmtL(maxDayH2O)} (${fmtDayMed(recordWaterDay)})`;
   }
 
   // ---------- day view: timeline ----------
   function renderTimeline() {
     const host = $('#timeline');
     const items = (byDay.get(selDay) || []).slice().sort((a, b) => a.start - b.start);
-    if (!items.length) { host.innerHTML = '<p class="empty">Brak promptów tego dnia.</p>'; return; }
+    if (!items.length) { host.innerHTML = `<p class="empty">${L('Brak promptów tego dnia.', 'No prompts this day.')}</p>`; return; }
 
     const W = Math.max(280, host.clientWidth);
     const narrow = W < 560;
@@ -800,7 +816,7 @@ footer { color: var(--muted); font-size: 12px; }
 
     const spanH = (t1 - t0) / H1;
     const hStep = [1, 2, 3, 4, 6, 12].find(s => iw / spanH * s >= 48) || 24;
-    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Oś czasu promptów">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="${L('Oś czasu promptów', 'Prompt timeline')}">`;
     for (let t = t0; t <= t1; t += H1) {
       const d = new Date(t);
       if (d.getHours() % hStep) continue;
@@ -833,13 +849,13 @@ footer { color: var(--muted); font-size: 12px; }
     host.innerHTML = s;
   }
   function turnTip(t) {
-    return `<b>${fmtTime(t.start)} – ${fmtEnd(t)}</b> · ${fmtDur(t.dur)}${t.i ? ' <span class="tag">przerwany</span>' : ''}`
-      + (t.segs.length > 1 ? `<br><span class="m">Zegarowo ${fmtDur(t.wall)}; ${t.segs.length} odcinki aktywności, przerwy &gt; ${GAP} min nieliczone</span>` : '')
+    return `<b>${fmtTime(t.start)} – ${fmtEnd(t)}</b> · ${fmtDur(t.dur)}${t.i ? ` <span class="tag">${L('przerwany', 'interrupted')}</span>` : ''}`
+      + (t.segs.length > 1 ? `<br><span class="m">${L(`Zegarowo ${fmtDur(t.wall)}; ${t.segs.length} odcinki aktywności, przerwy &gt; ${GAP} min nieliczone`, `Wall clock ${fmtDur(t.wall)}; ${t.segs.length} active stretches, breaks &gt; ${GAP} min not counted`)}</span>` : '')
       + `<br><span class="dot" style="background:${projColor(t.p)}"></span>${esc(t.p)} · <b>${esc(fmtModels(t.m))}</b>`
-      + `<br><span class="m">Prompt: ${fmtNum(t.c)} zn. (${fmtNum(t.w)} słów)${t.img ? `, obrazy: ${t.img}` : ''}`
-      + `<br>Odpowiedź: ${fmtNum(t.o)} tokenów, narzędzia: ${t.t}`
-      + `<br>Szacowany koszt: <b>${fmtUsd(t.usd)}</b>${t.usds ? ` (w tym subagenci ${fmtUsd(t.usds)})` : ''}${t.cu ? ' – niepełny, brak ceny modelu' : ''}`
-      + `<br>Woda: ${fmtL(t.h2o)}</span>`
+      + `<br><span class="m">Prompt: ${fmtNum(t.c)} ${L('zn.', 'chars')} (${fmtNum(t.w)} ${L('słów', 'words')})${t.img ? `, ${L('obrazy', 'images')}: ${t.img}` : ''}`
+      + `<br>${L('Odpowiedź', 'Answer')}: ${fmtNum(t.o)} ${L('tokenów, narzędzia', 'tokens, tools')}: ${t.t}`
+      + `<br>${L('Szacowany koszt', 'Estimated cost')}: <b>${fmtUsd(t.usd)}</b>${t.usds ? ` (${L('w tym subagenci', 'subagents')} ${fmtUsd(t.usds)})` : ''}${t.cu ? L(' – niepełny, brak ceny modelu', ' – incomplete, no model price') : ''}`
+      + `<br>${L('Woda', 'Water')}: ${fmtL(t.h2o)}</span>`
       + (t.k ? `<br><span class="corr">${CORR_MARK[t.k]}</span> <span class="m">${esc(corrLabel(t))}</span>` : '')
       + (t.x ? `<div class="x">„${esc(t.x)}”</div>` : '');
   }
@@ -857,11 +873,12 @@ footer { color: var(--muted); font-size: 12px; }
 
   // ---------- day view: table ----------
   const COLS = [
-    ['start', 'Start', 't'], ['end', 'Koniec', 't'], ['dur', 'Czas', 'n'], ['p', 'Projekt', ''], ['m', 'Model', ''],
-    ['c', 'Znaki', 'n'], ['o', 'Tokeny', 'n'], ['t', 'Narzędzia', 'n'], ['usd', 'Koszt', 'n'], ['h2o', 'Woda', 'n'], ['k', 'Problem', 'c'], ['x', 'Prompt', 'x'],
+    ['start', 'Start', 't'], ['end', L('Koniec', 'End'), 't'], ['dur', L('Czas', 'Time'), 'n'], ['p', L('Projekt', 'Project'), ''], ['m', 'Model', ''],
+    ['c', L('Znaki', 'Chars'), 'n'], ['o', L('Tokeny', 'Tokens'), 'n'], ['t', L('Narzędzia', 'Tools'), 'n'], ['usd', L('Koszt', 'Cost'), 'n'], ['h2o', L('Woda', 'Water'), 'n'], ['k', 'Problem', 'c'], ['x', 'Prompt', 'x'],
   ];
-  const costTitle = t => `Wejście ${fmtNum(t.in)} · odczyt cache ${fmtNum(t.cr)} · zapis cache ${fmtNum(t.cw)} · wyjście ${fmtNum(t.o)} tokenów`
-    + (t.usds ? `\nW tym subagenci: ${fmtUsd(t.usds)}` : '') + (t.cu ? '\nNiepełny: brak ceny dla części odpowiedzi' : '');
+  const costTitle = t => L(`Wejście ${fmtNum(t.in)} · odczyt cache ${fmtNum(t.cr)} · zapis cache ${fmtNum(t.cw)} · wyjście ${fmtNum(t.o)} tokenów`,
+      `Input ${fmtNum(t.in)} · cache read ${fmtNum(t.cr)} · cache write ${fmtNum(t.cw)} · output ${fmtNum(t.o)} tokens`)
+    + (t.usds ? `\n${L('W tym subagenci', 'Subagents')}: ${fmtUsd(t.usds)}` : '') + (t.cu ? L('\nNiepełny: brak ceny dla części odpowiedzi', '\nIncomplete: no price for part of the answer') : '');
   function renderTable() {
     const items = (byDay.get(selDay) || []).slice().sort((a, b) => {
       const va = a[sortKey], vb = b[sortKey];
@@ -872,14 +889,14 @@ footer { color: var(--muted); font-size: 12px; }
     items.forEach(t => {
       h += `<tr data-t="${t.id}"${selTurn === t.id ? ' class="sel"' : ''}>`
         + `<td class="t">${fmtTime(t.start)}</td><td class="t">${fmtEnd(t)}</td>`
-        + `<td class="n" title="Zegarowo: ${fmtDur(t.wall)}">${fmtDur(t.dur)}${t.segs.length > 1 ? '*' : ''}</td>`
+        + `<td class="n" title="${L('Zegarowo', 'Wall clock')}: ${fmtDur(t.wall)}">${fmtDur(t.dur)}${t.segs.length > 1 ? '*' : ''}</td>`
         + `<td class="pj"><span class="dot" style="background:${projColor(t.p)}"></span>${esc(t.p)}</td>`
         + `<td class="pj" title="${esc(t.m || '')}">${esc(fmtModels(t.m))}</td>`
         + `<td class="n">${fmtNum(t.c)}</td><td class="n">${fmtNum(t.o)}</td><td class="n">${t.t}</td>`
         + `<td class="n" title="${esc(costTitle(t))}">${fmtUsd(t.usd)}${t.cu ? '*' : ''}</td>`
         + `<td class="n">${fmtL(t.h2o)}</td>`
         + `<td class="c">${t.k ? `<span class="corr" title="${esc(corrLabel(t))}">${CORR_MARK[t.k]}</span>` : ''}</td>`
-        + `<td class="x">${esc(t.x)}${t.i ? '<span class="tag">przerwany</span>' : ''}</td></tr>`;
+        + `<td class="x">${esc(t.x)}${t.i ? `<span class="tag">${L('przerwany', 'interrupted')}</span>` : ''}</td></tr>`;
     });
     $('#tbl').innerHTML = h + '</tbody>';
   }
@@ -921,7 +938,7 @@ footer { color: var(--muted); font-size: 12px; }
     + 'the an and or of to in on for is it this that be with as at by from are was you me my we not do can if so').split(' '));
   const words = t => t.tw ? t.tw.split(' ') : [];
   let pRange = 'all', pN = 2, pSel = null;   // pSel = { kind: 'word'|'phrase'|'open'|'cmd', text }
-  $('#pProj').innerHTML = '<option value="">Wszystkie projekty</option>' + projOrder.map(p => `<option>${esc(p)}</option>`).join('');
+  $('#pProj').innerHTML = `<option value="">${L('Wszystkie projekty', 'All projects')}</option>` + projOrder.map(p => `<option>${esc(p)}</option>`).join('');
 
   function promptSet() {
     const proj = $('#pProj').value;
@@ -944,7 +961,7 @@ footer { color: var(--muted); font-size: 12px; }
     const max = rows[0][1];
     $(host).innerHTML = rows.map(([k, n]) => {
       const on = pSel && pSel.kind === kind && pSel.text === k;
-      return `<button data-kind="${kind}" data-text="${esc(k)}" aria-pressed="${on}" title="${esc(k)}: w ${n} ${plural(n, 'prompcie', 'promptach', 'promptach')}">`
+      return `<button data-kind="${kind}" data-text="${esc(k)}" aria-pressed="${on}" title="${esc(k)}: ${L('w', 'in')} ${n} ${plural(n, 'prompcie', 'promptach', 'promptach', 'prompt', 'prompts')}">`
         + `<i style="width:${(n / max * 100).toFixed(1)}%"></i><span>${esc(k)}</span></button><span class="n">${n}</span>`;
     }).join('');
   }
@@ -972,21 +989,21 @@ footer { color: var(--muted); font-size: 12px; }
     document.querySelectorAll('#pRange button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.r === String(pRange))));
     document.querySelectorAll('#pN button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === pN)));
     const ts = promptSet(), txt = ts.filter(t => !t.cmd), stop = $('#pStop').checked;
-    $('#pCount').textContent = `${fmtNum(ts.length)} ${plural(ts.length, 'prompt', 'prompty', 'promptów')}`;
+    $('#pCount').textContent = `${fmtNum(ts.length)} ${plural(ts.length, 'prompt', 'prompty', 'promptów', 'prompt', 'prompts')}`;
     const lens = txt.map(t => words(t).length), vocab = new Set(txt.flatMap(words));
     const pct = f => fmtPct(ts.filter(f).length, ts.length);
     $('#pKpis').innerHTML = [
-      ['Prompty', fmtNum(ts.length), `${fmtNum(txt.length)} pisanych, ${fmtNum(ts.length - txt.length)} komend`],
-      ['Mediana długości', fmtNum(median(lens)) + ' słów', `najdłuższy: ${fmtNum(Math.max(0, ...lens))} słów`],
-      ['Pytania', pct(t => t.q), 'prompty ze znakiem „?”'],
-      ['Unikalne słowa', fmtNum(vocab.size), `łącznie ${fmtNum(sum(lens, x => x))} słów`],
-      ['Z wklejką', pct(t => t.pst), 'wklejony tekst, log lub błąd'],
-      ['Z obrazem', pct(t => t.img > 0), 'zrzut ekranu lub zdjęcie'],
-      ['Przerwane / awarie', pct(t => t.k === 2), `sygnały w treści: ${ts.filter(t => t.k === 1).length}`],
-      ['Śr. koszt promptu', fmtUsd(sum(ts, t => t.usd) / Math.max(1, ts.length)), `woda: ${fmtL(sum(ts, t => t.h2o) / Math.max(1, ts.length))} na prompt`],
+      [L('Prompty', 'Prompts'), fmtNum(ts.length), L(`${fmtNum(txt.length)} pisanych, ${fmtNum(ts.length - txt.length)} komend`, `${fmtNum(txt.length)} typed, ${fmtNum(ts.length - txt.length)} commands`)],
+      [L('Mediana długości', 'Median length'), fmtNum(median(lens)) + L(' słów', ' words'), L(`najdłuższy: ${fmtNum(Math.max(0, ...lens))} słów`, `longest: ${fmtNum(Math.max(0, ...lens))} words`)],
+      [L('Pytania', 'Questions'), pct(t => t.q), L('prompty ze znakiem „?”', 'prompts with a “?”')],
+      [L('Unikalne słowa', 'Unique words'), fmtNum(vocab.size), L(`łącznie ${fmtNum(sum(lens, x => x))} słów`, `${fmtNum(sum(lens, x => x))} words in total`)],
+      [L('Z wklejką', 'With pasted text'), pct(t => t.pst), L('wklejony tekst, log lub błąd', 'pasted text, a log or an error')],
+      [L('Z obrazem', 'With an image'), pct(t => t.img > 0), L('zrzut ekranu lub zdjęcie', 'a screenshot or a photo')],
+      [L('Przerwane / awarie', 'Interrupted / failed'), pct(t => t.k === 2), `${L('sygnały w treści', 'signals in text')}: ${ts.filter(t => t.k === 1).length}`],
+      [L('Śr. koszt promptu', 'Avg. prompt cost'), fmtUsd(sum(ts, t => t.usd) / Math.max(1, ts.length)), L(`woda: ${fmtL(sum(ts, t => t.h2o) / Math.max(1, ts.length))} na prompt`, `water: ${fmtL(sum(ts, t => t.h2o) / Math.max(1, ts.length))} per prompt`)],
     ].map(kpiHtml).join('');
 
-    blist('#pWords', topKeys(txt, t => words(t).filter(w => w.length > 1 && !(stop && STOP.has(w))), 20), 'word', 'Za mało promptów.');
+    blist('#pWords', topKeys(txt, t => words(t).filter(w => w.length > 1 && !(stop && STOP.has(w))), 20), 'word', L('Za mało promptów.', 'Not enough prompts.'));
     blist('#pPhrases', topKeys(txt, t => {
       const w = words(t), out = [];
       for (let i = 0; i + pN <= w.length; i++) {
@@ -996,15 +1013,15 @@ footer { color: var(--muted); font-size: 12px; }
         out.push(g.join(' '));
       }
       return out;
-    }, 20).filter(([, n]) => n >= 2), 'phrase', 'Żadne sformułowanie nie powtórzyło się w co najmniej dwóch promptach.');
-    blist('#pOpen', topKeys(txt, t => { const w = words(t); return w.length ? [w.slice(0, 2).join(' ')] : []; }, 12), 'open', 'Za mało promptów.');
-    blist('#pCmd', topKeys(ts.filter(t => t.cmd), t => [t.cmd], 12), 'cmd', 'Brak komend (/…) w tym okresie.');
+    }, 20).filter(([, n]) => n >= 2), 'phrase', L('Żadne sformułowanie nie powtórzyło się w co najmniej dwóch promptach.', 'No phrase repeated in at least two prompts.'));
+    blist('#pOpen', topKeys(txt, t => { const w = words(t); return w.length ? [w.slice(0, 2).join(' ')] : []; }, 12), 'open', L('Za mało promptów.', 'Not enough prompts.'));
+    blist('#pCmd', topKeys(ts.filter(t => t.cmd), t => [t.cmd], 12), 'cmd', L('Brak komend (/…) w tym okresie.', 'No commands (/…) in this period.'));
 
     const lenCnt = LEN_B.map(([a, b]) => lens.filter(n => n >= a && n <= b).length);
     vbars('#pLen', LEN_B.map(([a, b]) => b === Infinity ? `${a}+` : `${a}–${b}`), lenCnt,
-      i => `<b>${LEN_B[i][1] === Infinity ? LEN_B[i][0] + '+' : LEN_B[i][0] + '–' + LEN_B[i][1]} słów</b><br>${lenCnt[i]} ${plural(lenCnt[i], 'prompt', 'prompty', 'promptów')}`);
+      i => `<b>${LEN_B[i][1] === Infinity ? LEN_B[i][0] + '+' : LEN_B[i][0] + '–' + LEN_B[i][1]} ${L('słów', 'words')}</b><br>${lenCnt[i]} ${plural(lenCnt[i], 'prompt', 'prompty', 'promptów', 'prompt', 'prompts')}`);
     const hours = Array.from({ length: 24 }, (_, h) => ts.filter(t => t.start.getHours() === h).length);
-    vbars('#pHour', hours.map((_, h) => pad(h)), hours, h => `<b>${pad(h)}:00–${pad(h)}:59</b><br>${hours[h]} ${plural(hours[h], 'prompt', 'prompty', 'promptów')}`, 3);
+    vbars('#pHour', hours.map((_, h) => pad(h)), hours, h => `<b>${pad(h)}:00–${pad(h)}:59</b><br>${hours[h]} ${plural(hours[h], 'prompt', 'prompty', 'promptów', 'prompt', 'prompts')}`, 3);
     renderMatches(ts);
   }
 
@@ -1018,7 +1035,7 @@ footer { color: var(--muted); font-size: 12px; }
       : pSel.kind === 'open' ? (t => (t.tw + ' ').startsWith(pSel.text + ' '))
       : (t => (' ' + (t.tw || '') + ' ').includes(key));
     const list = ts.filter(hit).sort((a, b) => b.start - a.start);
-    $('#pMatchTitle').textContent = `„${pSel.text}” – ${list.length} ${plural(list.length, 'prompt', 'prompty', 'promptów')}`;
+    $('#pMatchTitle').textContent = `${L('„', '“')}${pSel.text}” – ${list.length} ${plural(list.length, 'prompt', 'prompty', 'promptów', 'prompt', 'prompts')}`;
     // highlight in the original excerpt: same words, any punctuation or case in between
     let rx = null;
     if (pSel.kind !== 'cmd') { try { rx = new RegExp('(' + pSel.text.split(' ').map(reEsc).join('[^\\p{L}]+') + ')', 'giu'); } catch (e) { rx = null; } }
@@ -1026,7 +1043,7 @@ footer { color: var(--muted); font-size: 12px; }
       const x = esc(t.x || '');
       return `<li data-t="${t.id}"><div class="meta">${fmtDayShort(t.day)} ${pad(t.start.getHours())}:${pad(t.start.getMinutes())} · `
         + `<span class="dot" style="background:${projColor(t.p)}"></span>${esc(t.p)}</div>${rx ? x.replace(rx, '<mark>$1</mark>') : x}</li>`;
-    }).join('') + (list.length > 200 ? '<li class="meta">… pokazano 200 najnowszych</li>' : '');
+    }).join('') + (list.length > 200 ? `<li class="meta">${L('… pokazano 200 najnowszych', '… showing the 200 newest')}</li>` : '');
   }
   $('#viewPrompts').addEventListener('click', e => {
     const b = e.target.closest('button[data-kind]');
@@ -1051,19 +1068,37 @@ footer { color: var(--muted); font-size: 12px; }
   $('#pStop').addEventListener('change', renderPrompts);
 
   // ---------- static texts ----------
-  $('#summary').textContent = `${fmtNum(turns.length)} promptów w ${days.length} dniach aktywnych (średnio ${(turns.length / days.length).toLocaleString('pl-PL', { maximumFractionDigits: 1 })} dziennie), `
-    + `od ${parseDay(firstDay).toLocaleDateString('pl-PL')} do ${parseDay(lastDay).toLocaleDateString('pl-PL')}. `
-    + `Szacowany koszt łącznie: ${fmtUsd(totUsd)}, woda: ${fmtL(totH2O)}, przerwane lub z awarią: ${fmtPct(allCorr.n, allCorr.d)}.`;
-  $('#foot').textContent = `Wygenerowano ${META.generated ? new Date(META.generated).toLocaleString('pl-PL') : '–'} z ${META.files || '?'} plików transkryptów (${META.sessions || '?'} sesji). Źródło: %USERPROFILE%\\.claude\\projects. `
+  const avgPerDay = (turns.length / days.length).toLocaleString(LOC, { maximumFractionDigits: 1 });
+  const fromTo = [parseDay(firstDay).toLocaleDateString(LOC), parseDay(lastDay).toLocaleDateString(LOC)];
+  $('#summary').textContent = L(
+    `${fmtNum(turns.length)} promptów w ${days.length} dniach aktywnych (średnio ${avgPerDay} dziennie), od ${fromTo[0]} do ${fromTo[1]}. `
+    + `Szacowany koszt łącznie: ${fmtUsd(totUsd)}, woda: ${fmtL(totH2O)}, przerwane lub z awarią: ${fmtPct(allCorr.n, allCorr.d)}.`,
+    `${fmtNum(turns.length)} prompts over ${days.length} active days (${avgPerDay} a day on average), from ${fromTo[0]} to ${fromTo[1]}. `
+    + `Estimated cost in total: ${fmtUsd(totUsd)}, water: ${fmtL(totH2O)}, interrupted or failed: ${fmtPct(allCorr.n, allCorr.d)}.`);
+  const generated = META.generated ? new Date(META.generated).toLocaleString(LOC) : '–';
+  $('#foot').textContent = L(
+    `Wygenerowano ${generated} z ${META.files || '?'} plików transkryptów (${META.sessions || '?'} sesji). Źródło: %USERPROFILE%\\.claude\\projects. `
     + `Ceny: publiczny cennik LiteLLM, sprawdzone ${META.pricesChecked || '–'} (${META.pricesStatus || '–'}); historia i ręczne korekty w ceny.json. Przelicznik wody: woda.json.`
-    + (META.unknownModels ? ` Brak ceny dla: ${META.unknownModels}.` : '');
-  $('#kpiNote').textContent = 'Koszt = równowartość cen API (wejście, odczyt i zapis cache, wyjście; z subagentami) według cen z dnia promptu – przy planie Team/Max faktyczny rachunek jest inny, służy do porównań. '
+    + (META.unknownModels ? ` Brak ceny dla: ${META.unknownModels}.` : ''),
+    `Generated ${generated} from ${META.files || '?'} transcript files (${META.sessions || '?'} sessions). Source: %USERPROFILE%\\.claude\\projects. `
+    + `Prices: the public LiteLLM price list, checked ${META.pricesChecked || '–'} (${META.pricesStatus || '–'}); history and manual fixes in ceny.json. Water rates: woda.json.`
+    + (META.unknownModels ? ` No price for: ${META.unknownModels}.` : ''));
+  $('#kpiNote').textContent = L(
+    'Koszt = równowartość cen API (wejście, odczyt i zapis cache, wyjście; z subagentami) według cen z dnia promptu – przy planie Team/Max faktyczny rachunek jest inny, służy do porównań. '
     + 'Przerwane / awarie (●) = przerwałeś klawiszem Esc, zatrzymałeś przy pytaniu o narzędzie, wywołanie API zakończyło się błędem albo nie było żadnej odpowiedzi. '
     + `Sygnał w treści (○, liczony osobno) = następny prompt w ciągu ${META.corrWindow || 30} min odrzuca odpowiedź, zgłasza, że problem nadal występuje, doprecyzowuje albo pyta o błąd (reguły w reguly.json). `
-    + `Słup wody ma tę samą skalę dla każdego dnia (rekord: ${fmtL(maxDayH2O)}). Strzałki ← → przełączają dni.`;
-  $('#tlNote').textContent = 'Pasek = jeden prompt: od wysłania do ostatniej odpowiedzi Claude przed kolejnym promptem w tej sesji. '
+    + `Słup wody ma tę samą skalę dla każdego dnia (rekord: ${fmtL(maxDayH2O)}). Strzałki ← → przełączają dni.`,
+    'Cost = the equivalent at API prices (input, cache read and write, output; with subagents) on the day of the prompt. On a Team/Max plan your real bill differs; use it to compare. '
+    + 'Interrupted / failed (●) = you pressed Esc, stopped at a tool permission prompt, the API call failed or there was no answer at all. '
+    + `Signal in text (○, counted separately) = the next prompt within ${META.corrWindow || 30} min rejects the answer, says the problem is still there, clarifies or asks about an error (rules in reguly.json). `
+    + `The water column uses the same scale every day (record: ${fmtL(maxDayH2O)}). The ← → arrow keys switch days.`);
+  $('#tlNote').textContent = L(
+    'Pasek = jeden prompt: od wysłania do ostatniej odpowiedzi Claude przed kolejnym promptem w tej sesji. '
     + `Przerwy dłuższe niż ${GAP} min (np. nocne czekanie na zgodę) dzielą pasek na odcinki i nie wliczają się do czasu (* w tabeli). `
-    + 'Krótsze oczekiwanie na Twoją zgodę na narzędzia jest wliczone. Przerywana ramka = prompt przerwany.';
+    + 'Krótsze oczekiwanie na Twoją zgodę na narzędzia jest wliczone. Przerywana ramka = prompt przerwany.',
+    'A bar = one prompt: from sending it to Claude’s last answer before the next prompt in that session. '
+    + `Breaks longer than ${GAP} min (e.g. waiting overnight for approval) split the bar and are not counted (* in the table). `
+    + 'Shorter waits for your tool approval are counted. A dashed outline = an interrupted prompt.');
 
   renderDashKpis(); renderDashWater(); renderProjects(); buildDayList(); buildTubeScale(); syncRange();
   route();

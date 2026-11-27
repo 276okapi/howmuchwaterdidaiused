@@ -30,7 +30,7 @@ function hereString(content: string) {
   return "@'\n" + content.replace(/\n+$/, "") + "\n'@";
 }
 
-export async function buildOneFileAgent(opts: { server: string; apiKey: string }) {
+export async function buildOneFileAgent(opts: { server: string; apiKey: string; lang?: "pl" | "en" }) {
   const sync = await text("sync.ps1");
   const lines = sync.split("\n");
   const pStart = lines.findIndex(l => l.startsWith("param("));
@@ -50,9 +50,30 @@ export async function buildOneFileAgent(opts: { server: string; apiKey: string }
     'schtasks /Create /F /SC HOURLY /TN "howmuchwaterdidaiused" /TR "powershell -NoProfile -NonInteractive ' +
     '-WindowStyle Hidden -ExecutionPolicy Bypass -File \\"%LOCALAPPDATA%\\howmuchwaterdidaiused\\' + ONE_FILE_NAME + '\\" -Quiet"';
 
-  const out = `#requires -Version 5.1
-<#
-  howmuchwaterdidaiused - agent dla Windows (jeden plik)
+  const en = opts.lang === "en";
+  const header = en
+    ? `  howmuchwaterdidaiused - agent for Windows (one file)
+
+  Counts the stats of your work with an AI assistant on this computer (Claude Code for now)
+  and sends them to your account: ${ascii(opts.server)}
+  It shows nothing and saves no reports on disk. You see the report on the website.
+
+  PLEASE: set this script to run automatically EVERY HOUR.
+  More often than every 30 minutes makes no sense (the agent only sends new data), and less
+  than once a day leaves your results on the website out of date.
+
+  Example: save this file as %LOCALAPPDATA%\\howmuchwaterdidaiused\\${ONE_FILE_NAME}
+  and run this once in Command Prompt (cmd), no administrator rights needed:
+
+    ${scheduleCmd}
+
+  First send right away (in the folder with this file):
+    powershell -NoProfile -ExecutionPolicy Bypass -File .\\${ONE_FILE_NAME}
+
+  The code holds your account's API key - do not share this file. If it leaked,
+  generate a new one on the website (Account page) and download the agent again.
+  Log: %LOCALAPPDATA%\\howmuchwaterdidaiused\\sync.log`
+    : `  howmuchwaterdidaiused - agent dla Windows (jeden plik)
 
   Liczy statystyki Twojej pracy z asystentem AI na tym komputerze (na razie Claude Code)
   i wysyla je na Twoje konto: ${ascii(opts.server)}
@@ -72,11 +93,21 @@ export async function buildOneFileAgent(opts: { server: string; apiKey: string }
 
   W kodzie jest klucz API Twojego konta - nie udostepniaj tego pliku. Jesli wyciekl,
   wygeneruj nowy na stronie w zakladce Konto i pobierz agenta ponownie.
-  Dziennik: %LOCALAPPDATA%\\howmuchwaterdidaiused\\sync.log
-#>
-${ascii(params)}
-
-# ===== USTAWIENIA (mozesz zmienic) ===========================================================
+  Dziennik: %LOCALAPPDATA%\\howmuchwaterdidaiused\\sync.log`;
+  const settings = en
+    ? `# ===== SETTINGS (you can change these) ========================================================
+$AgentConfig = @{
+    server        = ${psQuote(opts.server)}
+    apiKey        = ${psQuote(opts.apiKey)}
+    sources       = @('claude-code')   # data sources; only Claude Code for now
+    # Prompt text (first 200 characters): $true = send, $false = stays on this computer.
+    # Note: without it the website has no prompt reports (Prompts view: top words, phrases
+    # and text preview). Tokens, time, cost and water work the same either way.
+    shareText     = $false
+    # Project names (folder names): $true = send, $false = "projekt 1", "projekt 2"...
+    shareProjects = $false
+}`
+    : `# ===== USTAWIENIA (mozesz zmienic) ===========================================================
 $AgentConfig = @{
     server        = ${psQuote(opts.server)}
     apiKey        = ${psQuote(opts.apiKey)}
@@ -87,7 +118,15 @@ $AgentConfig = @{
     shareText     = $false
     # Nazwy projektow (nazwy folderow): $true = wysylaj, $false = "projekt 1", "projekt 2"...
     shareProjects = $false
-}
+}`;
+
+  const out = `#requires -Version 5.1
+<#
+${header}
+#>
+${ascii(params)}
+
+${settings}
 
 # ===== AGENT ===================================================================================
 function Invoke-AgentSync {

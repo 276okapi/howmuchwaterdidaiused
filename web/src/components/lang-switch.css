@@ -1,0 +1,8 @@
+.lang-switch { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; padding: 2px; gap: 2px; background: var(--surface); }
+.lang-switch button {
+  border: 0; background: none; color: var(--muted); font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .02em;
+  padding: 4px 8px; border-radius: 6px; cursor: pointer; line-height: 1;
+}
+.lang-switch button:hover { color: var(--ink); }
+.lang-switch button[aria-pressed="true"] { background: var(--page); color: var(--ink); box-shadow: 0 0 0 1px var(--border); }
+.lang-switch button:focus-visible { outline: 2px solid #1a86c4; outline-offset: 1px; }

@@ -1,20 +1,20 @@
 "use client";
 // The report (report-template.html) keeps its own styles and scripts, so it runs in a frame.
 // The address of the page and the view inside the frame follow each other:
-//   /pulpit <-> #pulpit, /dni <-> #dzien[/YYYY-MM-DD], /prompty <-> #prompty
+//   /dashboard <-> #pulpit, /days <-> #dzien[/YYYY-MM-DD], /prompts <-> #prompty
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-const HASH: Record<string, string> = { "/pulpit": "#pulpit", "/dni": "#dzien", "/prompty": "#prompty" };
-const viewOfHash = (h: string) => (/^#dzien/.test(h) ? "/dni" : h === "#prompty" ? "/prompty" : "/pulpit");
+const HASH: Record<string, string> = { "/dashboard": "#pulpit", "/days": "#dzien", "/prompts": "#prompty" };
+const viewOfHash = (h: string) => (/^#dzien/.test(h) ? "/days" : h === "#prompty" ? "/prompts" : "/dashboard");
 
-export default function ReportFrame() {
+export default function ReportFrame({ title }: { title: string }) {
   const pathname = usePathname();
   const ref = useRef<HTMLIFrameElement>(null);
   // first address only; later changes go through the hash, without reloading the frame
-  const src = useRef(`/raport/widok${HASH[pathname] ?? "#pulpit"}`);
+  const src = useRef(`/report/view${HASH[pathname] ?? "#pulpit"}`);
 
-  // menu click -> show that view in the frame (keep the chosen day when already on /dni)
+  // menu click -> show that view in the frame (keep the chosen day when already on /days)
   useEffect(() => {
     const win = ref.current?.contentWindow;
     if (!win) return;
@@ -36,5 +36,5 @@ export default function ReportFrame() {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  return <iframe ref={ref} className="app-frame" src={src.current} title="Raport" />;
+  return <iframe ref={ref} className="app-frame" src={src.current} title={title} />;
 }

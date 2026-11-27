@@ -1,4 +1,4 @@
-// POST /api/agent/klucz - generates a new agent key (after a leak). All previous API keys of the
+// POST /api/agent/key - generates a new agent key (after a leak). All previous API keys of the
 // user stop working, so installed agents must be installed again with the new key.
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";

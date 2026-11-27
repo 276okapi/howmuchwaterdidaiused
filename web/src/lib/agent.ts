@@ -1,6 +1,6 @@
 // The agent: files in web/agent-dist/windows/ (copied by scripts/copy-shared.mjs).
 // The installer (howmuchwaterdidaiused-setup.exe) downloads the agent files below from
-// /api/agent/plik/<name> at install time; the manual setup shows them for copying.
+// /api/agent/file/<name> at install time; the manual setup shows them for copying.
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";

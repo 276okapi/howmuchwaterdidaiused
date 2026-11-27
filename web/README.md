@@ -12,18 +12,18 @@ służy do podglądu własnego raportu bez serwera.
 | Adres | Opis |
 |---|---|
 | `/register`, `/login` | Rejestracja i logowanie: e-mail + hasło, Google, GitHub (przyciski OAuth pokazują się po ustawieniu kluczy w `.env`) |
-| `/pulpit`, `/dni`, `/prompty` | Raport zalogowanego użytkownika, trzy widoki (szablon z `report-template.html` w ramce `/raport/widok`) |
+| `/dashboard`, `/dni`, `/prompty` | Raport zalogowanego użytkownika, trzy widoki (szablon z `report-template.html` w ramce `/report/view`) |
 | `/agent` | Instalacja agenta: instalator `.exe` z okienkiem albo ręcznie (agent w jednym pliku do skopiowania) |
-| `/konto` | Dane konta, sposoby logowania, klucz agenta i „Wygeneruj nowy klucz” |
+| `/account` | Dane konta, sposoby logowania, klucz agenta i „Wygeneruj nowy klucz” |
 
 Po zalogowaniu każda strona ma wysuwane z lewej menu: Pulpit, Raporty (Dni, Prompty), Agent, Konto,
 a na dole „Wyloguj” i przełącznik motywu (auto / jasny / ciemny, zapamiętany w przeglądarce).
 Nową funkcję dodaje się jako stronę owiniętą w `AppShell` i pozycję w `ITEMS` w `src/components/SideMenu.tsx`.
 | `POST /api/ingest` | Odbiór metryk z komputera użytkownika; nagłówek `x-api-key: cw_...` albo `Authorization: Bearer cw_...` |
-| `GET /api/agent/download?os=windows` | `howmuchwaterdidaiused-setup.exe` z dopisanym adresem strony i kluczem agenta (`&klucz=0`: bez nich) |
-| `GET /api/agent/plik/<nazwa>` | Plik agenta (publiczny), `?pobierz=1`: pobiera go instalator |
-| `GET /api/agent/skrypt` | Agent w jednym pliku (`howmuchwaterdidaiused.ps1`) z wpisanym kluczem; `?pobierz=1`: do zapisania |
-| `POST /api/agent/klucz` | Nowy klucz agenta (unieważnia wszystkie dotychczasowe klucze użytkownika) |
+| `GET /api/agent/download?os=windows` | `howmuchwaterdidaiused-setup.exe` z dopisanym adresem strony i kluczem agenta (`&key=0`: bez nich) |
+| `GET /api/agent/file/<nazwa>` | Plik agenta (publiczny), `?download=1`: pobiera go instalator |
+| `GET /api/agent/script` | Agent w jednym pliku (`howmuchwaterdidaiused.ps1`) z wpisanym kluczem; `?download=1`: do zapisania |
+| `POST /api/agent/key` | Nowy klucz agenta (unieważnia wszystkie dotychczasowe klucze użytkownika) |
 | `/api/auth/*` | Endpointy Better Auth |
 
 Każdy użytkownik ma jeden **klucz agenta**: strona wpisuje go w instalator i w agenta w jednym pliku,
@@ -185,7 +185,7 @@ web/
     ├── components/            # AppShell + SideMenu (menu po zalogowaniu)
     └── app/
         ├── (auth)/login, register
-        ├── (raport)/          # /pulpit, /dni, /prompty: wspólna ramka z raportem
+        ├── (raport)/          # /dashboard, /days, /prompty: wspólna ramka z raportem
         ├── raport/widok/      # HTML raportu z danymi użytkownika (zawartość ramki)
         ├── agent/             # instalacja agenta
         ├── api/agent/         # instalator, pliki agenta, agent w jednym pliku, nowy klucz

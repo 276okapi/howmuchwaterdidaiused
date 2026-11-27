@@ -68,7 +68,7 @@ namespace Howmuchwaterdidaiused
     {
         public const string CONFIG_MARKER = "#AIWT-CONFIG#";
         public const string TASK_NAME = "howmuchwaterdidaiused";
-        // files of the agent, downloaded from <server>/api/agent/plik/<name>
+        // files of the agent, downloaded from <server>/api/agent/file/<name>
         public static readonly string[] FILES = { "sync.ps1", "build-report.ps1", "register-task.ps1", "reguly.json", "woda.json", "ceny.json" };
         public static readonly string[] INTERVALS = { "30m", "1h", "6h", "1d" };
         public static readonly string[] INTERVAL_LABELS = { "co 30 minut", "co godzinę (zalecane)", "co 6 godzin", "raz dziennie (o 17:30)" };
@@ -141,7 +141,7 @@ namespace Howmuchwaterdidaiused
                     // the price history is only seeded: the agent keeps it up to date itself
                     if (name == "ceny.json" && File.Exists(target)) continue;
                     string tmp = target + ".tmp";
-                    try { wc.DownloadFile(server.TrimEnd('/') + "/api/agent/plik/" + name + "?pobierz=1", tmp); }
+                    try { wc.DownloadFile(server.TrimEnd('/') + "/api/agent/file/" + name + "?download=1", tmp); }
                     catch (WebException ex)
                     {
                         throw new InvalidOperationException("Nie udało się pobrać plików agenta ze strony " + server + " (" + ex.Message + ").");
@@ -524,7 +524,7 @@ namespace Howmuchwaterdidaiused
             };
             link.LinkArea = new LinkArea("Przejdź na stronę: ".Length, SiteLabel.Length);
             link.ForeColor = Color.FromArgb(225, 255, 255, 255);
-            link.LinkClicked += delegate { OpenSite("/pulpit"); };
+            link.LinkClicked += delegate { OpenSite("/dashboard"); };
             side.Controls.Add(link);
         }
 
@@ -769,7 +769,7 @@ namespace Howmuchwaterdidaiused
             btnCancel.Invalidate();
             mainAction = delegate
             {
-                OpenSite("/pulpit");
+                OpenSite("/dashboard");
                 Close();
             };
         }

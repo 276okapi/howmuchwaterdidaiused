@@ -2,6 +2,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import SideMenu from "./SideMenu";
+import { getLang } from "@/lib/lang";
 import "./app.css";
 
 export default async function AppShell({
@@ -22,7 +23,7 @@ export default async function AppShell({
   if (!session) redirect(`/login?next=${encodeURIComponent(path)}`);
   return (
     <div className="app">
-      <SideMenu name={session.user.name || session.user.email} email={session.user.email} />
+      <SideMenu name={session.user.name || session.user.email} email={session.user.email} lang={await getLang()} />
       <main className={full ? "app-main full" : wide ? "app-main wide" : "app-main"}>{children}</main>
     </div>
   );

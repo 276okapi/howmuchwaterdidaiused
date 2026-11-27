@@ -51,4 +51,4 @@ for (let i = 0; i < turns.length; i += 1000) {
   rejected += body.rejectedCount;
   if (body.rejectedCount) console.warn("Odrzucone:", body.rejected);
 }
-console.log(`Wysłano ${turns.length} promptów: przyjęte ${accepted}, odrzucone ${rejected}. Raport: ${url}/pulpit`);
+console.log(`Wysłano ${turns.length} promptów: przyjęte ${accepted}, odrzucone ${rejected}. Raport: ${url}/dashboard`);

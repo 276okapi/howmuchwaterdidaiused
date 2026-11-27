@@ -1,5 +1,6 @@
-// GET /api/agent/skrypt             the one-file agent with the user's agent key, as text (shown on the page)
-// GET /api/agent/skrypt?pobierz=1   the same as howmuchwaterdidaiused.ps1 to save
+// GET /api/agent/script             the one-file agent with the user's agent key, as text (shown on the page)
+// GET /api/agent/script?download=1   the same as howmuchwaterdidaiused.ps1 to save
+import { getLang } from "@/lib/lang";
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getAgentKey } from "@/lib/agent-key";
@@ -15,13 +16,13 @@ export async function GET(req: Request) {
   let script: string;
   try {
     const { key } = await getAgentKey(session.user.id);
-    script = await buildOneFileAgent({ server: publicUrl(req), apiKey: key });
+    script = await buildOneFileAgent({ server: publicUrl(req), apiKey: key, lang: await getLang() });
   } catch (e) {
     console.error("agent script:", e);
     const msg = e instanceof Error ? e.message : String(e);
     return new NextResponse(`Nie udało się przygotować kodu agenta: ${msg}`, { status: 500 });
   }
-  const download = new URL(req.url).searchParams.get("pobierz") === "1";
+  const download = new URL(req.url).searchParams.get("download") === "1" || new URL(req.url).searchParams.get("pobierz") === "1";
   return new NextResponse(script, {
     headers: {
       "content-type": `${download ? "application/octet-stream" : "text/plain"}; charset=utf-8`,

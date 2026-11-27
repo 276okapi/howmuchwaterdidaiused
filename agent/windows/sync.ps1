@@ -168,7 +168,7 @@ try {
     $msg = "Wysłano $($send.Count) z $($turns.Count) promptów: przyjęte $accepted"
     if ($rejected) { $msg += ", odrzucone $rejected" }
     Log $msg 'Green'
-    if (-not $Quiet) { Write-Host "Raport: $server/pulpit" }
+    if (-not $Quiet) { Write-Host "Raport: $server/dashboard" }
     exit 0
 } catch {
     Log "BŁĄD: $($_.Exception.Message)" 'Red'

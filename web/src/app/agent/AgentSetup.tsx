@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { pick, type Lang, type L as LFn } from "@/lib/i18n";
 
 const SYSTEMS = [
   { id: "windows", label: "Windows", ready: true },
@@ -17,7 +18,8 @@ const SOURCES = [
 
 const I = { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
-export default function AgentSetup() {
+export default function AgentSetup({ lang }: { lang: Lang }) {
+  const L = pick(lang);
   const [tab, setTab] = useState<"installer" | "manual">("installer");
   const [script, setScript] = useState<string | null>(null);
   const [scriptError, setScriptError] = useState<string | null>(null);
@@ -26,12 +28,12 @@ export default function AgentSetup() {
   async function loadScript() {
     setScriptError(null);
     try {
-      const res = await fetch("/api/agent/skrypt", { cache: "no-store" });
+      const res = await fetch("/api/agent/script", { cache: "no-store" });
       const text = await res.text();
       if (res.ok) setScript(text);
-      else setScriptError(text || `Serwer odpowiedział błędem ${res.status}.`);
+      else setScriptError(text || L(`Serwer odpowiedział błędem ${res.status}.`, `The server answered with error ${res.status}.`));
     } catch {
-      setScriptError("Brak połączenia ze stroną.");
+      setScriptError(L("Brak połączenia ze stroną.", "Cannot reach the site."));
     }
   }
 
@@ -60,34 +62,34 @@ export default function AgentSetup() {
             {SYSTEMS.map(s => (
               <button key={s.id} role="radio" aria-checked={s.id === "windows"} disabled={!s.ready}>
                 {s.label}
-                {!s.ready && <small>wkrótce</small>}
+                {!s.ready && <small>{L("wkrótce", "soon")}</small>}
               </button>
             ))}
           </div>
         </div>
         <div>
-          <h2>Źródło danych</h2>
+          <h2>{L("Źródło danych", "Data source")}</h2>
           <ul className="sources">
             {SOURCES.map(s => (
               <li key={s.name} className={s.ready ? "" : "off"}>
                 <span className="check" aria-hidden>{s.ready ? "✓" : ""}</span>
                 {s.name}
-                {!s.ready && <small>wkrótce</small>}
+                {!s.ready && <small>{L("wkrótce", "soon")}</small>}
               </li>
             ))}
           </ul>
         </div>
       </section>
-      <DataScope mode={tab} />
+      <DataScope mode={tab} L={L} />
       </aside>
 
       <div className="agent-main">
       <div className="agent-tabs" role="tablist">
         <button role="tab" aria-selected={tab === "installer"} onClick={() => setTab("installer")}>
-          Instalator
+          {L("Instalator", "Installer")}
         </button>
         <button role="tab" aria-selected={tab === "manual"} onClick={openManual}>
-          Ręcznie: skopiuj kod
+          {L("Ręcznie: skopiuj kod", "Manual: copy the code")}
         </button>
       </div>
 
@@ -95,23 +97,26 @@ export default function AgentSetup() {
         <section className="card agent-tab">
           <ol className="steps">
             <li>
-              <h3>Pobierz instalator</h3>
-              <p>Klucz Twojego konta jest już w środku, więc nie przekazuj pliku innym.</p>
-              <a className="btn btn-primary" href="/api/agent/download?os=windows">Pobierz howmuchwaterdidaiused-setup.exe</a>
+              <h3>{L("Pobierz instalator", "Download the installer")}</h3>
+              <p>{L("Klucz Twojego konta jest już w środku, więc nie przekazuj pliku innym.", "Your account key is already inside, so do not pass the file on to others.")}</p>
+              <a className="btn btn-primary" href="/api/agent/download?os=windows">{L("Pobierz", "Download")} howmuchwaterdidaiused-setup.exe</a>
             </li>
             <li>
-              <h3>Uruchom go</h3>
+              <h3>{L("Uruchom go", "Run it")}</h3>
               <p>
-                Instalator nie ma jeszcze podpisu cyfrowego, więc Windows może pokazać okno „System Windows
-                chronił ten komputer”. Kliknij wtedy „Więcej informacji”, a potem „Uruchom mimo to”.
-                Uprawnienia administratora nie są potrzebne.
+                {L(
+                  "Instalator nie ma jeszcze podpisu cyfrowego, więc Windows może pokazać okno „System Windows chronił ten komputer”. Kliknij wtedy „Więcej informacji”, a potem „Uruchom mimo to”. Uprawnienia administratora nie są potrzebne.",
+                  "The installer is not digitally signed yet, so Windows may show “Windows protected your PC”. Click “More info”, then “Run anyway”. No administrator rights are needed.",
+                )}
               </p>
             </li>
             <li>
-              <h3>Wybierz opcje i kliknij Zainstaluj</h3>
+              <h3>{L("Wybierz opcje i kliknij Zainstaluj", "Pick the options and click Install")}</h3>
               <p>
-                Źródło danych, jak często wysyłać dane i co udostępniasz. Instalator ustawia wysyłanie w tle
-                i od razu wysyła pierwsze dane. Ustawienia zmienisz później z menu Start: „howmuchwaterdidaiused”.
+                {L(
+                  "Źródło danych, jak często wysyłać dane i co udostępniasz. Instalator ustawia wysyłanie w tle i od razu wysyła pierwsze dane. Ustawienia zmienisz później z menu Start: „howmuchwaterdidaiused”.",
+                  "The data source, how often to send data and what you share. The installer sets up sending in the background and sends the first data right away. Change the settings later from the Start menu: “howmuchwaterdidaiused”. The installer is in Polish for now.",
+                )}
               </p>
             </li>
           </ol>
@@ -120,20 +125,20 @@ export default function AgentSetup() {
         <section className="card agent-tab manual">
           <div className="todo">
             <div className="todo-item">
-              <h3><span className="todo-icon"><svg {...I}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M12 12v6M9.5 15.5 12 18l2.5-2.5" /></svg></span>Zapisz jako plik</h3>
-              <p><code>howmuchwaterdidaiused.ps1</code> w <code>%LOCALAPPDATA%\howmuchwaterdidaiused</code>. Klucz konta jest już w środku.</p>
+              <h3><span className="todo-icon"><svg {...I}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M12 12v6M9.5 15.5 12 18l2.5-2.5" /></svg></span>{L("Zapisz jako plik", "Save it as a file")}</h3>
+              <p><code>howmuchwaterdidaiused.ps1</code> {L("w", "in")} <code>%LOCALAPPDATA%\howmuchwaterdidaiused</code>. {L("Klucz konta jest już w środku.", "Your account key is already inside.")}</p>
             </div>
             <div className="todo-item">
-              <h3><span className="todo-icon"><svg {...I}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></span>Uruchamiaj co godzinę</h3>
-              <p>Np. w Harmonogramie zadań; gotowe polecenie jest na początku kodu.</p>
+              <h3><span className="todo-icon"><svg {...I}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></span>{L("Uruchamiaj co godzinę", "Run it every hour")}</h3>
+              <p>{L("Np. w Harmonogramie zadań; gotowe polecenie jest na początku kodu.", "For example with Task Scheduler; a ready command is at the top of the code.")}</p>
             </div>
             <div className="todo-item">
-              <h3><span className="todo-icon"><svg {...I}><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></span>Wybierz, co udostępniasz</h3>
-              <p>Dwa przełączniki w sekcji <code>USTAWIENIA</code>, domyślnie wyłączone.</p>
+              <h3><span className="todo-icon"><svg {...I}><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></span>{L("Wybierz, co udostępniasz", "Choose what you share")}</h3>
+              <p>{L("Dwa przełączniki w sekcji", "Two switches in the")} <code>{L("USTAWIENIA", "SETTINGS")}</code>{L(", domyślnie wyłączone.", " section, off by default.")}</p>
             </div>
           </div>
 
-          <Cadence />
+          <Cadence L={L} />
 
           <div className="editor">
             <div className="editor-bar">
@@ -141,19 +146,19 @@ export default function AgentSetup() {
                 <svg {...I} width={14} height={14}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /></svg>
                 howmuchwaterdidaiused.ps1
               </span>
-              {script && <span className="editor-meta">{lines} linii, z kluczem Twojego konta</span>}
+              {script && <span className="editor-meta">{lines} {L("linii, z kluczem Twojego konta", "lines, with your account key")}</span>}
               <span className="editor-actions">
-                <button className="btn btn-ghost" onClick={copy} disabled={!script}>{copied ? "Skopiowano" : "Kopiuj"}</button>
-                <a className="btn btn-ghost" href="/api/agent/skrypt?pobierz=1">Pobierz plik</a>
+                <button className="btn btn-ghost" onClick={copy} disabled={!script}>{copied ? L("Skopiowano", "Copied") : L("Kopiuj", "Copy")}</button>
+                <a className="btn btn-ghost" href="/api/agent/script?download=1">{L("Pobierz plik", "Download file")}</a>
               </span>
             </div>
             {scriptError ? (
               <div className="editor-error">
                 <p>{scriptError}</p>
-                <button className="btn btn-ghost" onClick={loadScript}>Spróbuj ponownie</button>
+                <button className="btn btn-ghost" onClick={loadScript}>{L("Spróbuj ponownie", "Try again")}</button>
               </div>
             ) : (
-              <pre className="editor-code">{script ?? "Wczytuję kod agenta…"}</pre>
+              <pre className="editor-code">{script ?? L("Wczytuję kod agenta…", "Loading the agent code…")}</pre>
             )}
           </div>
 
@@ -165,56 +170,62 @@ export default function AgentSetup() {
 }
 
 /** How often to run the agent: a log-scale track from 10 minutes to 3 days with the sensible range marked. */
-function Cadence() {
+function Cadence({ L }: { L: LFn }) {
   // positions on a log scale 10 min .. 3 days
   const pos = (min: number) => `${((Math.log(min) - Math.log(10)) / (Math.log(4320) - Math.log(10))) * 100}%`;
   return (
-    <figure className="cadence" aria-label="Jak często uruchamiać agenta">
+    <figure className="cadence" aria-label={L("Jak często uruchamiać agenta", "How often to run the agent")}>
       <figcaption>
-        <b>Jak często?</b> Najlepiej co godzinę. Częściej niż co 30 minut nie ma sensu, bo agent wysyła tylko nowe dane,
-        a rzadziej niż raz dziennie sprawi, że Twoje wyniki będą nieaktualne.
+        <b>{L("Jak często?", "How often?")}</b>{" "}
+        {L(
+          "Najlepiej co godzinę. Częściej niż co 30 minut nie ma sensu, bo agent wysyła tylko nowe dane, a rzadziej niż raz dziennie sprawi, że Twoje wyniki będą nieaktualne.",
+          "Every hour works best. More often than every 30 minutes makes no sense, since the agent only sends new data, and less than once a day leaves your results out of date.",
+        )}
       </figcaption>
       <div className="cadence-track">
         <span className="zone ok" style={{ left: pos(30), width: `calc(${pos(1440)} - ${pos(30)})` }} />
         <span className="pin" style={{ left: pos(60) }} />
       </div>
       <div className="cadence-scale">
-        <span className="far" style={{ left: 0 }}>za często</span>
-        <span style={{ left: pos(30) }}>co 30 min</span>
-        <span className="best" style={{ left: pos(60) }}>co godzinę<br /><small>zalecane</small></span>
-        <span style={{ left: pos(1440) }}>raz dziennie</span>
-        <span className="far end" style={{ right: 0 }}>za rzadko</span>
+        <span className="far" style={{ left: 0 }}>{L("za często", "too often")}</span>
+        <span style={{ left: pos(30) }}>{L("co 30 min", "every 30 min")}</span>
+        <span className="best" style={{ left: pos(60) }}>{L("co godzinę", "every hour")}<br /><small>{L("zalecane", "recommended")}</small></span>
+        <span style={{ left: pos(1440) }}>{L("raz dziennie", "once a day")}</span>
+        <span className="far end" style={{ right: 0 }}>{L("za rzadko", "too rarely")}</span>
       </div>
     </figure>
   );
 }
 
 /** What the agent sends: always the numbers; prompt text and project names only when switched on. */
-function DataScope({ mode }: { mode: "installer" | "manual" }) {
-  const always = ["Czas pracy", "Tokeny", "Model", "Koszt", "Woda", "Przerwania i błędy"];
+function DataScope({ mode, L }: { mode: "installer" | "manual"; L: LFn }) {
+  const always = L(
+    ["Czas pracy", "Tokeny", "Model", "Koszt", "Woda", "Przerwania i błędy"],
+    ["Working time", "Tokens", "Model", "Cost", "Water", "Interruptions and errors"],
+  );
   const optional = [
     {
-      name: "Treść promptów",
-      how: mode === "manual" ? <code>shareText = $true</code> : "pole „Udostępniaj treść promptów”",
-      off: "Bez niej nie będzie raportów z promptów (najczęstsze słowa, sformułowania, podgląd treści).",
+      name: L("Treść promptów", "Prompt text"),
+      how: mode === "manual" ? <code>shareText = $true</code> : L("pole „Udostępniaj treść promptów”", "the “Share prompt text” option"),
+      off: L("Bez niej nie będzie raportów z promptów (najczęstsze słowa, sformułowania, podgląd treści).", "Without it there are no prompt reports (top words, phrases, text preview)."),
     },
     {
-      name: "Nazwy projektów",
-      how: mode === "manual" ? <code>shareProjects = $true</code> : "pole „Udostępniaj nazwy projektów”",
-      off: "Bez nich: „projekt 1”, „projekt 2”… zamiast nazw folderów.",
+      name: L("Nazwy projektów", "Project names"),
+      how: mode === "manual" ? <code>shareProjects = $true</code> : L("pole „Udostępniaj nazwy projektów”", "the “Share project names” option"),
+      off: L("Bez nich: „projekt 1”, „projekt 2”… zamiast nazw folderów.", "Without them: “project 1”, “project 2”… instead of folder names."),
     },
   ];
   return (
     <div className="scope">
       <div className="scope-col">
-        <h3>Agent wysyła zawsze</h3>
+        <h3>{L("Agent wysyła zawsze", "The agent always sends")}</h3>
         <ul className="chips">
           {always.map(a => <li key={a}>{a}</li>)}
         </ul>
-        <p className="scope-note">Liczby dla każdego promptu. Na komputerze agent nic nie wyświetla ani nie zapisuje.</p>
+        <p className="scope-note">{L("Liczby dla każdego promptu. Na komputerze agent nic nie wyświetla ani nie zapisuje.", "Numbers for each prompt. On your computer the agent shows and saves nothing.")}</p>
       </div>
       <div className="scope-col">
-        <h3>Tylko gdy włączysz</h3>
+        <h3>{L("Tylko gdy włączysz", "Only when you switch it on")}</h3>
         {optional.map(o => (
           <div key={o.name} className="opt">
             <span className="switch" aria-hidden><span /></span>
@@ -224,7 +235,7 @@ function DataScope({ mode }: { mode: "installer" | "manual" }) {
             </div>
           </div>
         ))}
-        <p className="scope-note">Anonimizacja odbywa się na komputerze, przed wysłaniem.</p>
+        <p className="scope-note">{L("Anonimizacja odbywa się na komputerze, przed wysłaniem.", "Anonymising happens on your computer, before sending.")}</p>
       </div>
     </div>
   );
