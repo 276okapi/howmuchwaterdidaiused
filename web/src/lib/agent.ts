@@ -1,12 +1,12 @@
 // The agent: files in web/agent-dist/windows/ (copied by scripts/copy-shared.mjs).
-// The installer (AIWaterTracker-Setup.exe) downloads the agent files below from
+// The installer (howmuchwaterdidaiused-setup.exe) downloads the agent files below from
 // /api/agent/plik/<name> at install time; the manual setup shows them for copying.
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 export const AGENT_VERSION = "1.0.0";
-export const SETUP_EXE = "AIWaterTracker-Setup.exe";
+export const SETUP_EXE = "howmuchwaterdidaiused-setup.exe";
 /** Marker after which the site appends {server, apiKey} to the installer (read by Setup.cs). */
 export const CONFIG_MARKER = "#AIWT-CONFIG#";
 

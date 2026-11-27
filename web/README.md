@@ -1,4 +1,4 @@
-# Claude Water Tracker – wersja webowa
+# howmuchwaterdidaiused – wersja webowa
 
 Aplikacja Next.js z logowaniem (Better Auth) i bazą MySQL/MariaDB. Po zalogowaniu
 pokazuje ten sam interaktywny raport co wersja lokalna (`../report-template.html`),
@@ -20,9 +20,9 @@ Po zalogowaniu każda strona ma wysuwane z lewej menu: Pulpit, Raporty (Dni, Pro
 a na dole „Wyloguj” i przełącznik motywu (auto / jasny / ciemny, zapamiętany w przeglądarce).
 Nową funkcję dodaje się jako stronę owiniętą w `AppShell` i pozycję w `ITEMS` w `src/components/SideMenu.tsx`.
 | `POST /api/ingest` | Odbiór metryk z komputera użytkownika; nagłówek `x-api-key: cw_...` albo `Authorization: Bearer cw_...` |
-| `GET /api/agent/download?os=windows` | `AIWaterTracker-Setup.exe` z dopisanym adresem strony i kluczem agenta (`&klucz=0`: bez nich) |
+| `GET /api/agent/download?os=windows` | `howmuchwaterdidaiused-setup.exe` z dopisanym adresem strony i kluczem agenta (`&klucz=0`: bez nich) |
 | `GET /api/agent/plik/<nazwa>` | Plik agenta (publiczny), `?pobierz=1`: pobiera go instalator |
-| `GET /api/agent/skrypt` | Agent w jednym pliku (`ai-water-tracker.ps1`) z wpisanym kluczem; `?pobierz=1`: do zapisania |
+| `GET /api/agent/skrypt` | Agent w jednym pliku (`howmuchwaterdidaiused.ps1`) z wpisanym kluczem; `?pobierz=1`: do zapisania |
 | `POST /api/agent/klucz` | Nowy klucz agenta (unieważnia wszystkie dotychczasowe klucze użytkownika) |
 | `/api/auth/*` | Endpointy Better Auth |
 
@@ -39,16 +39,16 @@ Agent tylko wysyła dane: nic nie wyświetla i nie zapisuje raportów na kompute
 - `../agent/windows/setup/Setup.cs`: instalator z okienkiem (Windows Forms, C# 5). Użytkownik wybiera
   źródło danych (na razie tylko Claude Code), częstotliwość (30 min / 1 h / 6 h / raz dziennie)
   i czy udostępnia treść promptów oraz nazwy projektów. Instalator pobiera ze strony aktualne pliki
-  agenta do `%LOCALAPPDATA%\AIWaterTracker`, zapisuje `config.json`, tworzy zadanie w Harmonogramie
-  zadań, wysyła pierwsze dane i dodaje skrót „AI Water Tracker” w menu Start (zmiana ustawień,
+  agenta do `%LOCALAPPDATA%\howmuchwaterdidaiused`, zapisuje `config.json`, tworzy zadanie w Harmonogramie
+  zadań, wysyła pierwsze dane i dodaje skrót „howmuchwaterdidaiused” w menu Start (zmiana ustawień,
   odinstalowanie). Adres strony i klucz API strona dopisuje na końcu `.exe` przy pobieraniu.
 - Budowanie: `..\agent\windows\setup\build.cmd` (kompilator C# wbudowany w Windows, nic nie trzeba
-  instalować). Wynik `AIWaterTracker-Setup.exe` jest w repozytorium. Przebudować trzeba tylko po zmianie
+  instalować). Wynik `howmuchwaterdidaiused-setup.exe` jest w repozytorium. Przebudować trzeba tylko po zmianie
   `Setup.cs`, bo skrypty agenta instalator pobiera ze strony.
 - `../agent/windows/sync.ps1`: liczy (`../build-report.ps1 -JsonOut`, bez raportu), anonimizuje i wysyła.
 - `../agent/windows/register-task.ps1`: zadanie w Harmonogramie (instalator; przy ręcznej konfiguracji).
 
-Ręcznie: strona składa z `sync.ps1`, `build-report.ps1` i plików reguł jeden `ai-water-tracker.ps1`
+Ręcznie: strona składa z `sync.ps1`, `build-report.ps1` i plików reguł jeden `howmuchwaterdidaiused.ps1`
 (`src/lib/agent-script.ts`) z wpisanym adresem strony i kluczem agenta. Plik jest w czystym ASCII, bo kod
 wklejony do Notatnika zapisuje się bez BOM, a Windows PowerShell 5.1 źle czyta wtedy polskie znaki.
 Ustawienia (treść promptów, nazwy projektów) są na początku pliku; użytkownik ustawia uruchamianie co godzinę.

@@ -2,7 +2,7 @@
   "name": "howmuchwater-web",
   "version": "0.1.0",
   "private": true,
-  "description": "Claude Water Tracker - aplikacja webowa (Next.js + Better Auth + MySQL/MariaDB)",
+  "description": "howmuchwaterdidaiused - aplikacja webowa (Next.js + Better Auth + MySQL/MariaDB)",
   "engines": {
     "node": ">=20.12"
   },

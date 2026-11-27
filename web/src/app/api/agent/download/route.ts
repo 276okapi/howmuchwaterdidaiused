@@ -1,5 +1,5 @@
 // GET /api/agent/download?os=windows
-// The installer AIWaterTracker-Setup.exe with the site address and the user's agent key
+// The installer howmuchwaterdidaiused-setup.exe with the site address and the user's agent key
 // appended at the end (after CONFIG_MARKER), so it needs no typing. `&klucz=0`: without them.
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";

@@ -10,6 +10,6 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   createServer((req, res) => handle(req, res)).listen(port, () => {
-    console.log(`Claude Water Tracker działa na ${port}`);
+    console.log(`howmuchwaterdidaiused działa na ${port}`);
   });
 });

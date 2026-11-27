@@ -1,10 +1,10 @@
 ﻿#requires -Version 5.1
 <#
 .SYNOPSIS
-  AI Water Tracker - agent: liczy statystyki z lokalnych transkryptów asystenta AI
+  howmuchwaterdidaiused - agent: liczy statystyki z lokalnych transkryptów asystenta AI
   i wysyła je na Twoje konto. Nic nie wyświetla i nie zapisuje raportów na dysku.
-  Uruchamiany cyklicznie przez Harmonogram zadań (zadanie "AI Water Tracker", tworzy je
-  instalator AIWaterTracker-Setup.exe albo register-task.ps1).
+  Uruchamiany cyklicznie przez Harmonogram zadań (zadanie "howmuchwaterdidaiused", tworzy je
+  instalator howmuchwaterdidaiused-setup.exe albo register-task.ps1).
 
   Strona składa z tego pliku także agenta w jednym pliku (zakładka Agent, "Ręcznie"): wpisuje
   wtedy ustawienia w $AgentConfig, a pliki liczące w $AgentFiles, zamiast config.json obok.
@@ -39,7 +39,7 @@ $ErrorActionPreference = 'Stop'
 $AgentVersion = '1.1.0'
 # one-file agent: settings and files are in the script, the working folder is fixed
 $oneFile = Test-Path variable:AgentConfig
-$here = if ($oneFile) { Join-Path $env:LOCALAPPDATA 'AIWaterTracker' } else { $PSScriptRoot }
+$here = if ($oneFile) { Join-Path $env:LOCALAPPDATA 'howmuchwaterdidaiused' } else { $PSScriptRoot }
 New-Item -ItemType Directory -Force -Path $here | Out-Null
 $cfgPath = Join-Path $here 'config.json'
 $statePath = Join-Path $here 'stan.json'

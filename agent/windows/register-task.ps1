@@ -1,9 +1,9 @@
 ﻿#requires -Version 5.1
 <#
 .SYNOPSIS
-  Tworzy (albo usuwa) zadanie "AI Water Tracker" w Harmonogramie zadań, które uruchamia sync.ps1
+  Tworzy (albo usuwa) zadanie "howmuchwaterdidaiused" w Harmonogramie zadań, które uruchamia sync.ps1
   z tego folderu w tle. Nie wymaga uprawnień administratora: zadanie działa na Twoim koncie.
-  Używa go instalator AIWaterTracker-Setup.exe; przy instalacji ręcznej uruchom go sam.
+  Używa go instalator howmuchwaterdidaiused-setup.exe; przy instalacji ręcznej uruchom go sam.
 
 .EXAMPLE
   powershell -NoProfile -ExecutionPolicy Bypass -File .\register-task.ps1 -Interval 1h
@@ -13,7 +13,7 @@ param(
     # 30m, 1h (recommended), 6h or 1d (once a day at 17:30)
     [ValidateSet('30m', '1h', '6h', '1d')][string]$Interval = '1h',
     [switch]$Remove,
-    [string]$TaskName = 'AI Water Tracker'
+    [string]$TaskName = 'howmuchwaterdidaiused'
 )
 $ErrorActionPreference = 'Stop'
 
@@ -38,5 +38,5 @@ if ($Interval -eq '1d') {
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 30) `
     -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings `
-    -Description 'Wysyła statystyki pracy z asystentem AI na Twoje konto (AI Water Tracker).' -Force | Out-Null
+    -Description 'Wysyła statystyki pracy z asystentem AI na Twoje konto (howmuchwaterdidaiused).' -Force | Out-Null
 exit 0

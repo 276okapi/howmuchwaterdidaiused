@@ -616,7 +616,8 @@ footer { color: var(--muted); font-size: 12px; }
   let barList = [];
   function renderBars() {
     const host = $('#bars');
-    const W = Math.max(280, host.clientWidth), H = 220;
+    // 220 px, or the height the page gives the chart (the website's one-screen dashboard sets it)
+    const W = Math.max(280, host.clientWidth), H = host.dataset.fill && host.clientHeight > 100 ? host.clientHeight : 220;
     const m = { l: 34, r: 6, t: 22, b: 24 };
     const iw = W - m.l - m.r, ih = H - m.t - m.b;
 

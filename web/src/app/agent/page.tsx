@@ -10,23 +10,26 @@ export default async function AgentPage() {
   const last = session ? await getLastIngest(session.user.id) : null;
 
   return (
-    <AppShell path="/agent">
-      <h1>Agent</h1>
-      <p className="sub">
-        Mały program na Twoim komputerze. Co jakiś czas liczy statystyki pracy z asystentem AI
-        i wysyła je na to konto. Działa w tle, bez uprawnień administratora.
-      </p>
-
-      <div className={last ? "agent-status ok" : "agent-status"}>
-        <span className="dot" aria-hidden />
-        {last ? (
-          <>Ostatnie dane dotarły {new Date(last).toLocaleString("pl-PL", { dateStyle: "long", timeStyle: "short" })}.</>
-        ) : (
-          <>Na to konto nie dotarły jeszcze żadne dane. Zainstaluj agenta poniżej.</>
-        )}
+    <AppShell path="/agent" wide>
+      <div className="agent-page">
+        <header className="page-head">
+          <div>
+            <h1>Agent</h1>
+            <p className="sub">
+              Mały program na Twoim komputerze: co jakiś czas liczy statystyki pracy z asystentem AI i wysyła je na to konto.
+            </p>
+          </div>
+          <div className={last ? "agent-status ok" : "agent-status"}>
+            <span className="dot" aria-hidden />
+            {last ? (
+              <>Ostatnie dane: {new Date(last).toLocaleString("pl-PL", { dateStyle: "medium", timeStyle: "short" })}</>
+            ) : (
+              <>Nie dotarły jeszcze żadne dane</>
+            )}
+          </div>
+        </header>
+        <AgentSetup />
       </div>
-
-      <AgentSetup />
     </AppShell>
   );
 }

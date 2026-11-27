@@ -1,0 +1,57 @@
+/* Public pages: about and privacy policy */
+.pub { min-height: 100vh; display: flex; flex-direction: column; --water: #1a86c4; --deep: #0b4f76; }
+.pub-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap;
+  padding: 14px clamp(16px, 4vw, 48px); border-bottom: 1px solid var(--border); background: var(--page);
+  position: sticky; top: 0; z-index: 5;
+}
+.pub-brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 650; font-size: 16px; color: var(--ink); text-decoration: none; }
+.pub-drop { width: 13px; height: 13px; background: var(--water); border-radius: 50% 0 50% 50%; transform: rotate(-45deg); }
+.pub-nav { display: flex; align-items: center; gap: 6px 18px; flex-wrap: wrap; font-size: 14px; }
+.pub-nav a:not(.btn) { color: var(--ink2); text-decoration: none; }
+.pub-nav a:not(.btn):hover { color: var(--ink); text-decoration: underline; }
+.pub-nav .btn { padding: 7px 14px; background: #0f6fa6; }
+.pub-main { flex: 1; width: 100%; max-width: 1080px; margin: 0 auto; padding: clamp(20px, 4vw, 44px) clamp(16px, 4vw, 32px) 48px; }
+.pub-foot {
+  display: flex; gap: 8px 22px; flex-wrap: wrap; justify-content: center; padding: 18px 16px;
+  border-top: 1px solid var(--border); font-size: 13px; color: var(--muted);
+}
+.pub-foot a { color: var(--ink2); }
+
+/* about: hero, steps, feature cards */
+.about-hero { max-width: 44rem; margin-bottom: 28px; }
+.about-hero h1 { font-size: clamp(30px, 4vw, 46px); line-height: 1.05; letter-spacing: -.025em; margin: 0 0 12px; text-wrap: balance; }
+.about-hero p { font-size: 16px; color: var(--ink2); margin: 0; }
+.about-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 0 0 32px; padding: 0; list-style: none; counter-reset: s; }
+.about-steps li { counter-increment: s; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px 14px 54px; position: relative; background: var(--surface); }
+.about-steps li::before {
+  content: counter(s); position: absolute; left: 14px; top: 14px; width: 28px; height: 28px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--water); color: #fff; font-family: var(--display); font-weight: 700; font-size: 14px;
+}
+.about-steps b { display: block; margin-bottom: 2px; }
+.about-steps span { color: var(--ink2); font-size: 13.5px; }
+.about-h2 { font-family: var(--display); font-size: 22px; letter-spacing: -.015em; margin: 0 0 14px; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.feature { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+.feature-head { display: flex; align-items: center; gap: 10px; }
+.feature-icon { width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; background: rgba(26, 134, 196, .12); color: var(--water); flex-shrink: 0; }
+.feature h3 { margin: 0; font-size: 16px; }
+.feature p { margin: 0; color: var(--ink2); font-size: 14px; }
+.feature ul { margin: 0; padding-left: 18px; color: var(--ink2); font-size: 13.5px; display: grid; gap: 3px; }
+.about-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+.about-cta .btn-primary { background: #0f6fa6; }
+
+/* privacy policy: readable text */
+.policy { max-width: 46rem; }
+.policy h1 { font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -.02em; margin: 0 0 6px; }
+.policy .updated { color: var(--muted); margin: 0 0 22px; }
+.policy h2 { font-family: var(--display); font-size: 19px; margin: 30px 0 8px; letter-spacing: -.01em; }
+.policy p, .policy li { line-height: 1.65; color: var(--ink); }
+.policy ul { padding-left: 20px; }
+.policy li + li { margin-top: 4px; }
+.policy .todo-fill { background: rgba(237, 161, 0, .18); padding: 0 4px; border-radius: 4px; }
+.policy .lead { font-size: 16px; color: var(--ink2); }
+.policy-toc { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 12px 16px; margin-bottom: 8px; }
+.policy-toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 28px; font-size: 14px; }
+@media (max-width: 640px) { .policy-toc ol { columns: 1; } }
+.policy-toc a { color: var(--ink2); }

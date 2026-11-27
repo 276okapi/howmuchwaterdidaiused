@@ -51,7 +51,8 @@ export default function AgentSetup() {
   const lines = script ? script.split("\n").length : 0;
 
   return (
-    <>
+    <div className="agent-layout">
+      <aside className="agent-side">
       <section className="card agent-pick">
         <div>
           <h2>System</h2>
@@ -75,10 +76,12 @@ export default function AgentSetup() {
               </li>
             ))}
           </ul>
-          <p className="hint">Na razie dostępne jest tylko Claude Code.</p>
         </div>
       </section>
+      <DataScope mode={tab} />
+      </aside>
 
+      <div className="agent-main">
       <div className="agent-tabs" role="tablist">
         <button role="tab" aria-selected={tab === "installer"} onClick={() => setTab("installer")}>
           Instalator
@@ -89,12 +92,12 @@ export default function AgentSetup() {
       </div>
 
       {tab === "installer" ? (
-        <section className="card">
+        <section className="card agent-tab">
           <ol className="steps">
             <li>
               <h3>Pobierz instalator</h3>
               <p>Klucz Twojego konta jest już w środku, więc nie przekazuj pliku innym.</p>
-              <a className="btn btn-primary" href="/api/agent/download?os=windows">Pobierz AIWaterTracker-Setup.exe</a>
+              <a className="btn btn-primary" href="/api/agent/download?os=windows">Pobierz howmuchwaterdidaiused-setup.exe</a>
             </li>
             <li>
               <h3>Uruchom go</h3>
@@ -108,29 +111,25 @@ export default function AgentSetup() {
               <h3>Wybierz opcje i kliknij Zainstaluj</h3>
               <p>
                 Źródło danych, jak często wysyłać dane i co udostępniasz. Instalator ustawia wysyłanie w tle
-                i od razu wysyła pierwsze dane. Ustawienia zmienisz później z menu Start: „AI Water Tracker”.
+                i od razu wysyła pierwsze dane. Ustawienia zmienisz później z menu Start: „howmuchwaterdidaiused”.
               </p>
             </li>
           </ol>
-          <DataScope mode="installer" />
         </section>
       ) : (
-        <section className="card">
+        <section className="card agent-tab manual">
           <div className="todo">
             <div className="todo-item">
-              <span className="todo-icon"><svg {...I}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M12 12v6M9.5 15.5 12 18l2.5-2.5" /></svg></span>
-              <h3>Zapisz kod jako plik</h3>
-              <p>Nazwij go <code>ai-water-tracker.ps1</code> i zapisz w folderze <code>AIWaterTracker</code> w <code>%LOCALAPPDATA%</code>. Klucz Twojego konta jest już w środku.</p>
+              <h3><span className="todo-icon"><svg {...I}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M12 12v6M9.5 15.5 12 18l2.5-2.5" /></svg></span>Zapisz jako plik</h3>
+              <p><code>howmuchwaterdidaiused.ps1</code> w <code>%LOCALAPPDATA%\howmuchwaterdidaiused</code>. Klucz konta jest już w środku.</p>
             </div>
             <div className="todo-item">
-              <span className="todo-icon"><svg {...I}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></span>
-              <h3>Uruchamiaj go co godzinę</h3>
-              <p>Np. w Harmonogramie zadań. Gotowe polecenie jest na początku kodu.</p>
+              <h3><span className="todo-icon"><svg {...I}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></span>Uruchamiaj co godzinę</h3>
+              <p>Np. w Harmonogramie zadań; gotowe polecenie jest na początku kodu.</p>
             </div>
             <div className="todo-item">
-              <span className="todo-icon"><svg {...I}><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></span>
-              <h3>Zdecyduj, co udostępniasz</h3>
-              <p>Dwa przełączniki w sekcji <code>USTAWIENIA</code>. Domyślnie oba są wyłączone.</p>
+              <h3><span className="todo-icon"><svg {...I}><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></span>Wybierz, co udostępniasz</h3>
+              <p>Dwa przełączniki w sekcji <code>USTAWIENIA</code>, domyślnie wyłączone.</p>
             </div>
           </div>
 
@@ -140,7 +139,7 @@ export default function AgentSetup() {
             <div className="editor-bar">
               <span className="editor-tab">
                 <svg {...I} width={14} height={14}><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /></svg>
-                ai-water-tracker.ps1
+                howmuchwaterdidaiused.ps1
               </span>
               {script && <span className="editor-meta">{lines} linii, z kluczem Twojego konta</span>}
               <span className="editor-actions">
@@ -158,10 +157,10 @@ export default function AgentSetup() {
             )}
           </div>
 
-          <DataScope mode="manual" />
         </section>
       )}
-    </>
+      </div>
+    </div>
   );
 }
 
@@ -197,12 +196,12 @@ function DataScope({ mode }: { mode: "installer" | "manual" }) {
     {
       name: "Treść promptów",
       how: mode === "manual" ? <code>shareText = $true</code> : "pole „Udostępniaj treść promptów”",
-      off: "Bez niej nie będzie raportów z promptów: widok Prompty nie pokaże najczęstszych słów, sformułowań ani podglądu treści.",
+      off: "Bez niej nie będzie raportów z promptów (najczęstsze słowa, sformułowania, podgląd treści).",
     },
     {
       name: "Nazwy projektów",
       how: mode === "manual" ? <code>shareProjects = $true</code> : "pole „Udostępniaj nazwy projektów”",
-      off: "Bez nich zobaczysz „projekt 1”, „projekt 2”… zamiast nazw folderów.",
+      off: "Bez nich: „projekt 1”, „projekt 2”… zamiast nazw folderów.",
     },
   ];
   return (
@@ -212,7 +211,7 @@ function DataScope({ mode }: { mode: "installer" | "manual" }) {
         <ul className="chips">
           {always.map(a => <li key={a}>{a}</li>)}
         </ul>
-        <p className="scope-note">Tylko liczby dla każdego promptu. Agent nic nie wyświetla i nie zapisuje raportów na komputerze.</p>
+        <p className="scope-note">Liczby dla każdego promptu. Na komputerze agent nic nie wyświetla ani nie zapisuje.</p>
       </div>
       <div className="scope-col">
         <h3>Tylko gdy włączysz</h3>
@@ -225,7 +224,7 @@ function DataScope({ mode }: { mode: "installer" | "manual" }) {
             </div>
           </div>
         ))}
-        <p className="scope-note">Anonimizacja odbywa się na Twoim komputerze, zanim cokolwiek zostanie wysłane.</p>
+        <p className="scope-note">Anonimizacja odbywa się na komputerze, przed wysłaniem.</p>
       </div>
     </div>
   );

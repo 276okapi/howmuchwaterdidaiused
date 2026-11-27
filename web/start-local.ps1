@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-  Uruchamia lokalnie strone Claude Water Tracker (Next.js + MySQL/MariaDB).
+  Uruchamia lokalnie strone howmuchwaterdidaiused (Next.js + MySQL/MariaDB).
 
 .DESCRIPTION
   Za pierwszym razem:

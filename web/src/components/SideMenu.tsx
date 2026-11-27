@@ -145,6 +145,10 @@ export default function SideMenu({ name, email }: { name: string; email: string 
         ))}
 
         <div className="app-bottom">
+          <nav className="app-legal" aria-label="Informacje">
+            <Link href="/o-serwisie">Co jest w serwisie</Link>
+            <Link href="/prywatnosc">Polityka prywatności</Link>
+          </nav>
           <hr />
           <div className="app-bottom-row">
             <button className="app-signout" onClick={signOut} disabled={busy}>

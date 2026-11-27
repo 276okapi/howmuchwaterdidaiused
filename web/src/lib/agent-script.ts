@@ -1,10 +1,10 @@
-// Builds the one-file agent (ai-water-tracker.ps1) for the "manual" setup: the site address and the
+// Builds the one-file agent (howmuchwaterdidaiused.ps1) for the "manual" setup: the site address and the
 // user's agent key are written in, sync.ps1 is the logic and the counting script with its rules
 // travels inside as text. The result is pure ASCII on purpose: code pasted into Notepad is saved
 // without a BOM, and Windows PowerShell 5.1 would then misread any non-ASCII character.
 import { readAgentFile } from "./agent";
 
-export const ONE_FILE_NAME = "ai-water-tracker.ps1";
+export const ONE_FILE_NAME = "howmuchwaterdidaiused.ps1";
 
 const PL: Record<string, string> = {
   ą: "a", ć: "c", ę: "e", ł: "l", ń: "n", ó: "o", ś: "s", ź: "z", ż: "z",
@@ -47,12 +47,12 @@ export async function buildOneFileAgent(opts: { server: string; apiKey: string }
   ];
 
   const scheduleCmd =
-    'schtasks /Create /F /SC HOURLY /TN "AI Water Tracker" /TR "powershell -NoProfile -NonInteractive ' +
-    '-WindowStyle Hidden -ExecutionPolicy Bypass -File \\"%LOCALAPPDATA%\\AIWaterTracker\\' + ONE_FILE_NAME + '\\" -Quiet"';
+    'schtasks /Create /F /SC HOURLY /TN "howmuchwaterdidaiused" /TR "powershell -NoProfile -NonInteractive ' +
+    '-WindowStyle Hidden -ExecutionPolicy Bypass -File \\"%LOCALAPPDATA%\\howmuchwaterdidaiused\\' + ONE_FILE_NAME + '\\" -Quiet"';
 
   const out = `#requires -Version 5.1
 <#
-  AI Water Tracker - agent dla Windows (jeden plik)
+  howmuchwaterdidaiused - agent dla Windows (jeden plik)
 
   Liczy statystyki Twojej pracy z asystentem AI na tym komputerze (na razie Claude Code)
   i wysyla je na Twoje konto: ${ascii(opts.server)}
@@ -62,7 +62,7 @@ export async function buildOneFileAgent(opts: { server: string; apiKey: string }
   Czesciej niz co 30 minut nie ma sensu (agent wysyla tylko nowe dane), a rzadziej niz
   raz dziennie sprawi, ze Twoje wyniki na stronie beda nieaktualne.
 
-  Przyklad: zapisz ten plik jako %LOCALAPPDATA%\\AIWaterTracker\\${ONE_FILE_NAME}
+  Przyklad: zapisz ten plik jako %LOCALAPPDATA%\\howmuchwaterdidaiused\\${ONE_FILE_NAME}
   i raz uruchom w Wierszu polecenia (cmd), bez uprawnien administratora:
 
     ${scheduleCmd}
@@ -72,7 +72,7 @@ export async function buildOneFileAgent(opts: { server: string; apiKey: string }
 
   W kodzie jest klucz API Twojego konta - nie udostepniaj tego pliku. Jesli wyciekl,
   wygeneruj nowy na stronie w zakladce Konto i pobierz agenta ponownie.
-  Dziennik: %LOCALAPPDATA%\\AIWaterTracker\\sync.log
+  Dziennik: %LOCALAPPDATA%\\howmuchwaterdidaiused\\sync.log
 #>
 ${ascii(params)}
 
@@ -94,7 +94,7 @@ function Invoke-AgentSync {
 ${ascii(body).replace(/\n+$/, "")}
 }
 
-# ===== PLIKI LICZACE (nie zmieniaj; agent zapisuje je w %LOCALAPPDATA%\\AIWaterTracker) =====
+# ===== PLIKI LICZACE (nie zmieniaj; agent zapisuje je w %LOCALAPPDATA%\\howmuchwaterdidaiused) =====
 $AgentFiles = @{}
 ${files.map(([name, content]) => `$AgentFiles['${name}'] = ${hereString(content)}`).join("\n\n")}
 

@@ -1,7 +1,7 @@
 // Sends the data of a local report (raport.html made by build-report.ps1) to the website.
 // A stop-gap until the real local agent exists, so the online report can be tested.
 //
-//   node scripts/import-raport.mjs --url https://woda.example.pl --key cw_xxx ../raport.html
+//   node scripts/import-raport.mjs --url https://howmuchwaterdidaiused.com --key cw_xxx ../raport.html
 //
 // Privacy: prompt text (x, tw) is removed HERE, before anything leaves the computer.
 // Project names are replaced with "projekt 1", "projekt 2"... unless --keep-project-names.

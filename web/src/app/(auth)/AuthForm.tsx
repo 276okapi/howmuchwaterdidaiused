@@ -113,6 +113,11 @@ export default function AuthForm({ mode, providers }: { mode: "login" | "registe
           {register && <span className="hint">Co najmniej 10 znaków.</span>}
         </label>
         {error && <p className="error" role="alert">{error}</p>}
+        {register && (
+          <p className="consent">
+            Zakładając konto, akceptujesz <Link href="/prywatnosc" target="_blank">politykę prywatności</Link>.
+          </p>
+        )}
         <button className="btn btn-primary btn-block" disabled={busy}>
           {busy ? "Chwila…" : register ? "Załóż konto" : "Zaloguj się"}
         </button>
@@ -125,6 +130,10 @@ export default function AuthForm({ mode, providers }: { mode: "login" | "registe
           <>Pierwszy raz tutaj? <Link href={`/register${q}`}>Załóż konto</Link></>
         )}
       </p>
+      <nav className="legal" aria-label="Informacje">
+        <Link href="/o-serwisie">Co znajdziesz po zalogowaniu</Link>
+        <Link href="/prywatnosc">Polityka prywatności</Link>
+      </nav>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 // GET /api/agent/skrypt             the one-file agent with the user's agent key, as text (shown on the page)
-// GET /api/agent/skrypt?pobierz=1   the same as ai-water-tracker.ps1 to save
+// GET /api/agent/skrypt?pobierz=1   the same as howmuchwaterdidaiused.ps1 to save
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getAgentKey } from "@/lib/agent-key";
